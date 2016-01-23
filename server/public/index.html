@@ -57,11 +57,9 @@
 			socket.on('sourceConnectSuccess', function(data) {
 				
 				video.onloadedmetadata = function() {
-					setTimeout(function() {
-						setInterval(function() {
-							show_video();
-						}, 1);
-					}, 1000);
+					setInterval(function() {
+						show_video();
+					}, 1);
 				};
 				
 				navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
@@ -74,11 +72,13 @@
 			});
 			
 			socket.on('sayVoiceMessages', function(data) {
-				speak('Put down my stuff thief!', function() {
-					setTimeout(function() {
+				if (data) {
+					speak(data);
+				} else {
+					speak('Put down my stuff thief!', function() {
 						speak('That\'s right, you are being recorded!');
-					}, 100);
-				});
+					});
+				}
 			});
 			
 			function connectSource() {

@@ -20,6 +20,24 @@ var server = app.listen(3000, function () {
 	console.log('Watch My Tech started at http://%s:%s', host, port);
 });
 
+function sendVoiceMessage(sessionID, message, socket) {
+	if (sessionID in sessions) {
+		var sourceSocket = sessions[sessionID].source;
+		if (sourceSocket) {
+			sourceSocket.emit('sayVoiceMessages', message);
+			socket.emit('customBroadCastSuccess', '');
+			console.log('sent voice to session id ' + sessionID);
+		} else {
+			socket.emit('watch_error', 'Source not set yet');
+			console.log('Source not set yet');
+		}
+	} else {
+		socket.emit('watch_error', 'No such session exists!');
+		console.log('session with id ' + sessionID + ' not found probably because it does not exist');
+	}
+}
+
+
 var imagemod = 10;
 var imagecount = 0;
 var sessions = [];
@@ -61,19 +79,13 @@ io.on('connection', function(socket){
 	});
 	
 	socket.on('sendVoice', function(sessionID) {
-		if (sessionID in sessions) {
-			var sourceSocket = sessions[sessionID].source;
-			if (sourceSocket) {
-				sourceSocket.emit('sayVoiceMessages', '');
-				console.log('sent voice to session id ' + sessionID);
-			} else {
-				socket.emit('watch_error', 'Source not set yet');
-				console.log('Source not set yet');
-			}
-		} else {
-			socket.emit('watch_error', 'No such session exists!');
-			console.log('session with id ' + sessionID + ' not found probably because it does not exist');
-		}
+		sendVoiceMessage(sessionID, '', socket);
+	});
+	
+	socket.on('customBroadCast', function(data) {
+		var sessionID = data.sessionID;
+		var message = data.message;
+		sendVoiceMessage(sessionID, message, socket);
 	});
 	
 	socket.on('image', function(data) {

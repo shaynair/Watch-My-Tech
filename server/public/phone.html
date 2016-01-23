@@ -13,6 +13,7 @@
 		<link rel="stylesheet" type="text/css" href="css/style.css">
 
 		<script src="https://cdn.socket.io/socket.io-1.4.3.js"></script>
+		<script src="https://code.jquery.com/jquery-3.0.0-beta1.min.js"></script>
 	</head>
 	  
 	<body>
@@ -42,8 +43,8 @@
 
 			<button id="sayvoice" onclick="sendVoice();">Stop thief! You are on camera</button>
 
-			<form>
-				<input type="text" placeholder="Broadcast a custom message"></input>
+			<form id="broadcastForm">
+				<input type="text" placeholder="Broadcast a custom message" id="broadcastMessage"></input>
 				<input type="submit">
 			</form>
 
@@ -91,6 +92,10 @@
 				// document.getElementById("sayvoice").style.display = "block";
 			});
 			
+			socket.on('customBroadCastSuccess', function() {
+				document.getElementById("broadcastMessage").value = "";
+			});
+			
 			function startSession() {
 				socket.emit("startSession");
 			}
@@ -103,7 +108,15 @@
 			function sendVoice() {
 				socket.emit("sendVoice", session_id);
 			}
-
+			
+			$( "#broadcastForm" ).submit(function( event ) {
+				socket.emit("customBroadCast", {
+					'sessionID' : session_id,
+					'message' : document.getElementById("broadcastMessage").value
+				});
+				return false;
+			});
+			
 			startSession();
 
 		</script>
