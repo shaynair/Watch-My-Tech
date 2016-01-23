@@ -8,12 +8,11 @@ var uuid = require('node-uuid');
 
 app.use(express.static(__dirname + '/public'));
 
-app.get('/', function (req, res) {
-	if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-		var dest = 'phone.html';
-	}
-	else {
-		var dest = 'index.html';
+app.get('/', function (req, res) {	
+	if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(req.headers['user-agent'] || "unknown")) {
+		var dest = 'public/phone.html';
+	} else {
+		var dest = 'public/pc.html';
 	}
 	res.sendFile(dest, { root: __dirname });
 });
@@ -50,6 +49,12 @@ var sessionMAINID = 1000;
 var io = require('socket.io').listen(server);
 
 io.on('connection', function(socket){
+	
+	
+	
+	
+	
+	
 	socket.on('startSession', function() {
 		sessions[sessionMAINID] = {
 			'clients' : [socket],
