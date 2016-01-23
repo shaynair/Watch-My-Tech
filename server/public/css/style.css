@@ -1,5 +1,70 @@
+html, body {
+	height:100%;
+	width:100%;
+	margin:0;
+}
+
 body {
 	background:#00b8fc;
 	font-family: 'Roboto', sans-serif;
+	z-index:1;
 }
 
+#container {
+	margin: 0px auto;
+}
+
+.phone {
+	text-align:center;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+
+}
+
+.goto {
+	color:rgba(255,255,255,0.5);
+	font-size:20px;
+	font-weight:600;
+	margin-bottom:5px;
+}
+
+.watchmytech {
+	color:#ececec;
+	font-size:30px;
+	margin-bottom:30px;
+}
+
+.eye {
+	margin-bottom:30px;
+}
+
+.eye img {
+	max-width:60%;
+}
+
+.webstream-container {
+	position:absolute;
+	left:0;
+	right:0;
+	top:0;
+}
+
+#webstream {
+	height:500px;
+	width:320px;
+/*	z-index:99;*/
+}
+
+button.getcode {
+	background:transparent;
+	border:0px none transparent;
+	color:rgba(255,255,255,0.5);
+	font-size:18px;
+	font-weight:600;
+}
+
+#sessionField {
+	color:#ececec;
+	font-size:30px;
+}

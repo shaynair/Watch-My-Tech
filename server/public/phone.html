@@ -13,11 +13,6 @@
 		<link rel="stylesheet" type="text/css" href="css/style.css">
 
 		<style>
-			#container {
-				margin: 0px auto;
-				width: 500px;
-				height: 375px;
-			}
 			#videoElement {
 				width: 500px;
 				height: 375px;
@@ -32,15 +27,29 @@
 	</head>
 	  
 	<body>
+		<div class="webstream-container">
+			<img id="webstream"/>
+		</div>
+		
+		<div class="phone" id="container">
+				<div class="instructions">
+					<div class="goto">Go to</div>
+					<div class="watchmytech">watchmy.tech</div>
+				</div>
 
-		<div id="container">
-				<!-- <button id="startSession" onclick="startSession();">New Session</button> -->
+				<div class="eye">
+					<img src="img/eye.png">					
+				</div>
+
+				<button class="getcode" id="startSession">Get Code</button>
+
+				<div class="code"></div>
 				<!-- <input type="text" id="sessionIDField"/><button id="joinSession" onclick="joinSession();">Join Session</button> -->
-				<div id="sessionField"/>
-				<img id="webstream" width="500px" height="375px"/>
+				<div id="sessionField"></div>
+				
 
 
-				<button id="sayvoice" style="display:none;" onclick="sendVoice();">ACTIVATE VOICE</button>
+				<!-- <button id="sayvoice" style="display:none;" onclick="sendVoice();">ACTIVATE VOICE</button> -->
 		</div>
 
 		<script>
@@ -58,10 +67,10 @@
 			
 			socket.on('startSessionSuccess', function(sessionID) {
 				session_id = sessionID;
-				document.getElementById("sessionField").innerHTML = "Session ID: " + sessionID; 
-				document.getElementById("startSession").style.display = "none";
-				document.getElementById("sessionIDField").style.display = "none";
-				document.getElementById("joinSession").style.display = "none";
+				document.getElementById("sessionField").innerHTML = sessionID; 
+				// document.getElementById("startSession").style.display = "none";
+				// document.getElementById("sessionIDField").style.display = "none";
+				// document.getElementById("joinSession").style.display = "none";
 				document.getElementById("sayvoice").style.display = "block";
 			});
 			
@@ -70,8 +79,8 @@
 				session_id = sessionID;
 				document.getElementById("sessionField").innerHTML = "Session ID: " + sessionID; 
 				document.getElementById("startSession").style.display = "none";
-				document.getElementById("sessionIDField").style.display = "none";
-				document.getElementById("joinSession").style.display = "none";
+				// document.getElementById("sessionIDField").style.display = "none";
+				// document.getElementById("joinSession").style.display = "none";
 				document.getElementById("sayvoice").style.display = "block";
 			});
 			
@@ -87,6 +96,9 @@
 			function sendVoice() {
 				socket.emit("sendVoice", session_id);
 			}
+
+			startSession();
+
 		</script>
 	</body>
 </html>
