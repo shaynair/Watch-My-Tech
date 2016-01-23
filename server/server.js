@@ -2,7 +2,7 @@ var express = require('express');
 var app = express();
 var path = require('path'); 
 var fs = require("fs");
-
+var uuid = require('node-uuid');
 
 var sessions = [];
 
@@ -20,7 +20,8 @@ var server = app.listen(3000, function () {
 	console.log('Watch My Tech started at http://%s:%s', host, port);
 });
 
-
+var imagemod = 10;
+var imagecount = 0;
 var io = require('socket.io').listen(server);
 
 io.on('connection', function(socket){
@@ -75,6 +76,20 @@ io.on('connection', function(socket){
 		} else {
 			console.log('could not send image to session with id ' + sessionID + ' probably because it does not exist');
 		}
+		
+		// save it
+		if (imagecount % imagemod == 0) {
+			var base64Data = stringData.replace(/^data:image\/png;base64,/, "");
+			var filename = "out_" + uuid.v4() + ".png";
+			fs.writeFile("captures/" + filename, base64Data, 'base64', function(err) {
+				if (err) {
+					console.log(err);
+				} else {
+					console.log("Saved file " + filename);
+				}
+			});
+		}
+		imagecount += 1;
 	});
 	
 	socket.on('disconnect', function() {
