@@ -9,7 +9,12 @@ var uuid = require('node-uuid');
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', function (req, res) {
-	var dest = 'index.html';
+	if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+		var dest = 'phone.html';
+	}
+	else {
+		var dest = 'index.html';
+	}
 	res.sendFile(dest, { root: __dirname });
 });
 
