@@ -49,12 +49,7 @@ var sessionMAINID = 1000;
 var io = require('socket.io').listen(server);
 
 io.on('connection', function(socket){
-	
-	
-	
-	
-	
-	
+
 	socket.on('startSession', function() {
 		sessions[sessionMAINID] = {
 			'clients' : [socket],
