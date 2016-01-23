@@ -25,37 +25,76 @@ var io = require('socket.io').listen(server);
 
 io.on('connection', function(socket){
 	socket.on('startSession', function() {
-		sessions[socket.id] = [];
-		socket.emit('startSessionSuccess', socket.id);
-		console.log('set up a cam client with id ' + socket.id);
-	});
-	
-	socket.on('joinSession', function(sessionID) {
-		if (sessionID in sessions) {
-			sessions[sessionID].push(socket);
-			socket.emit('startSessionSuccess', socket.id);
-			console.log('regular user joined session with id ' + sessionID);
+		if (socket.id in sessions) {
+			socket.emit('watch_error', 'failed to start a session with phone client with id ' + socket.id);
+			console.log('failed to start a session with phone client with id ' + socket.id);
 		} else {
-			socket.emit('error', 'No such session exists!');
-			console.log('regular user did not join session with id ' + sessionID + ' probably because it does not exist');
+			sessions[socket.id] = {
+				'clients' : [socket],
+				'source' : null
+			};
+			socket.emit('startSessionSuccess', socket.id);
+			console.log('set up phone client with id ' + socket.id);
 		}
 	});
 	
-	socket.on('image', function(stringData) {
-		var listOfClients = sessions[socket.id];
-		for(var i=0; i<listOfClients.length; i+=1) {
-			listOfClients[i].emit('image', stringData);
+	socket.on('joinSession', function(sessionID) {
+		console.log(sessionID);
+		if (socket.id in sessions) {
+			socket.emit('watch_error', 'Cannot join this session because you already created it?!');
+			console.log('phone did not join session with id ' + sessionID + ' probably because you created it');
+		} else if (sessionID in sessions) {
+			sessions[sessionID].clients.push(socket);
+			socket.emit('joinSessionSuccess', '');
+			console.log('phone joined session with id ' + sessionID);
+		} else {
+			socket.emit('watch_error', 'No such session exists!');
+			console.log('phone did not join session with id ' + sessionID + ' probably because it does not exist');
+		}
+	});
+	
+	socket.on('sourceConnect', function(sessionID) {
+		if (sessionID in sessions) {
+			sessions[sessionID].source = socket;
+			socket.emit('sourceConnectSuccess', '');
+			console.log('connected source to session id ' + sessionID);
+		} else {
+			socket.emit('watch_error', 'No such session exists!');
+			console.log('source did not join session with id ' + sessionID + ' probably because it does not exist');
+		}
+	});
+	
+	socket.on('image', function(data) {
+		var sessionID = data.sessionID;
+		var stringData = data.stringData;
+		if (sessionID in sessions) {
+			var listOfClients = sessions[sessionID].clients;
+			for(var i=0; i<listOfClients.length; i+=1) {
+				listOfClients[i].emit('image', stringData);
+			}
+		} else {
+			console.log('could not send image to session with id ' + sessionID + ' probably because it does not exist');
 		}
 	});
 	
 	socket.on('disconnect', function() {
-		// check if the cam client disconnected
-		if (socket.id in sessions) {
-			// remove from the list
-			delete sessions[socket.id];
-			console.log('a cam client left');
-		} else {
-			console.log('a regular client left');
+		for(var prop in sessions) {
+			if (sessions.hasOwnProperty(prop)) {
+				if (sessions[prop].source == socket.id) {
+					delete sessions[prop];
+					console.log('a source left');
+					return;
+				} else {
+					var clients = sessions[prop].clients;
+					for(var i=0; i<clients.length; i+=1) {
+						if (clients[i].id == socket.id) {
+							clients.slice(i, 1);
+							console.log('a phone client left');
+							return;
+						}
+					}
+				}
+			}
 		}
 	});
 });

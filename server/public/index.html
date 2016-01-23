@@ -12,7 +12,6 @@
 				margin: 0px auto;
 				width: 500px;
 				height: 375px;
-				border: 10px #333 solid;
 			}
 			#videoElement {
 				width: 500px;
@@ -29,13 +28,15 @@
 	  
 	<body>
 
-		<center id="sessionIDField"></center>
 		<div id="container">
+			<center id="topInfo">Session ID: <input type="text" id="sessionIDField"/><button id="connectSource" onclick="connectSource();">Connect</button></center>
+			
 			<video autoplay="true" id="videoElement" width="500px" height="375px">
 			 
 			</video>
+			
+			<center><button id="hideALL" onclick="hideAll();">HIDE</button></center>
 		</div>
-		<center><button id="hideALL" onclick="hideAll();">HIDE</button></center>
 		
 		<canvas id="output" width="500px" height="375px"></canvas>
 
@@ -43,26 +44,33 @@
 			var socket = io();
 			var video = document.getElementById("videoElement");
 
-			socket.on('startSessionSuccess', function(socketID) {
-				document.getElementById("sessionIDField").innerHTML = "Session ID: " + socketID;
-				console.log('set up session with id ' + socketID);
+			socket.on('watch_error', function(msg) {
+				alert(msg);
 			});
-			socket.emit('startSession');
 			
-			video.onloadedmetadata = function() {
-				setTimeout(function() {
-					setInterval(function() {
-						show_video();
-					}, 1);
-				}, 1000);
-			};
+			socket.on('sourceConnectSuccess', function(data) {
+				
+				video.onloadedmetadata = function() {
+					setTimeout(function() {
+						setInterval(function() {
+							show_video();
+						}, 1);
+					}, 1000);
+				};
+				
+				navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
+				 
+				if (navigator.getUserMedia) {       
+					navigator.getUserMedia({video: true}, handleVideo, videoError);
+				}
+				
+				document.getElementById("topInfo").style.display = "none";
+			});
 			
-			navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
-			 
-			if (navigator.getUserMedia) {       
-				navigator.getUserMedia({video: true}, handleVideo, videoError);
+			function connectSource() {
+				socket.emit('sourceConnect', document.getElementById("sessionIDField").value);
 			}
-			 
+			
 			function handleVideo(stream) {
 				video.src = window.URL.createObjectURL(stream);
 			}
@@ -88,13 +96,14 @@
 				var stringData = back.toDataURL();
 
 				// send to server
-				socket.emit('image', stringData);
+				socket.emit('image', {
+					'sessionID' : document.getElementById("sessionIDField").value,
+					'stringData' : stringData
+				});
 			}
 			
 			function hideAll() {
-				document.getElementById("sessionIDField").style.display="none";
 				document.getElementById("container").style.display="none";
-				document.getElementById("hideALL").style.display="none";
 			}
 		</script>
 	</body>
