@@ -5,8 +5,13 @@
 		<meta content="stuff, to, help, search, engines, not" name="keywords">
 		<meta content="What this page is about." name="description">
 		<meta content="Display Webcam Stream" name="title">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
 		<title>Display Webcam Stream</title>
-		  
+
+		<link href='https://fonts.googleapis.com/css?family=Roboto:400,300,500,700' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+
 		<style>
 			#container {
 				margin: 0px auto;
@@ -29,16 +34,13 @@
 	<body>
 
 		<div id="container">
-			<center>
-				<button id="startSession" onclick="startSession();">New Session</button>
-				<br/>
-				<input type="text" id="sessionIDField"/><button id="joinSession" onclick="joinSession();">Join Session</button>
+				<!-- <button id="startSession" onclick="startSession();">New Session</button> -->
+				<!-- <input type="text" id="sessionIDField"/><button id="joinSession" onclick="joinSession();">Join Session</button> -->
 				<div id="sessionField"/>
-			</center>
-			<img id="webstream" width="500px" height="375px"/>
-			<center>
+				<img id="webstream" width="500px" height="375px"/>
+
+
 				<button id="sayvoice" style="display:none;" onclick="sendVoice();">ACTIVATE VOICE</button>
-			</center>
 		</div>
 
 		<script>
