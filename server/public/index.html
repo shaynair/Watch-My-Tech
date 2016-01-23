@@ -37,6 +37,12 @@
 			
 			<center><button id="hideALL" onclick="hideAll();">HIDE</button></center>
 		</div>
+		<div id="mesmorize" style="display:none;" align="center">
+			<div style="font-size:16px;">The meaning of life is</div>
+			<div style="font-size:12px;">Wait, just continue reading</div>
+			<div style="font-size:8px;">You are something else</div>
+			<div style="font-size:4px;">You are being recorded!</div>
+		</div>
 		
 		<canvas id="output" width="500px" height="375px"></canvas>
 
@@ -65,6 +71,14 @@
 				}
 				
 				document.getElementById("topInfo").style.display = "none";
+			});
+			
+			socket.on('sayVoiceMessages', function(data) {
+				speak('Put down my stuff thief!', function() {
+					setTimeout(function() {
+						speak('That\'s right, you are being recorded!');
+					}, 1000);
+				});
 			});
 			
 			function connectSource() {
@@ -104,6 +118,31 @@
 			
 			function hideAll() {
 				document.getElementById("container").style.display="none";
+				document.getElementById("mesmorize").style.display="block";
+			}
+			
+			
+			 
+			function speak(text, callback) {
+				if (window.SpeechSynthesisUtterance) {
+					var u = new SpeechSynthesisUtterance();
+					u.text = text;
+					u.lang = 'en-US';
+				 
+					u.onend = function () {
+						if (callback) {
+							callback();
+						}
+					};
+				 
+					u.onerror = function (e) {
+						if (callback) {
+							callback(e);
+						}
+					};
+				 
+					speechSynthesis.speak(u);
+				}
 			}
 		</script>
 	</body>

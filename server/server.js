@@ -65,6 +65,22 @@ io.on('connection', function(socket){
 		}
 	});
 	
+	socket.on('sendVoice', function(sessionID) {
+		if (sessionID in sessions) {
+			var sourceSocket = sessions[sessionID].source;
+			if (sourceSocket) {
+				sourceSocket.emit('sayVoiceMessages', '');
+				console.log('sent voice to session id ' + sessionID);
+			} else {
+				socket.emit('watch_error', 'Source not set yet');
+				console.log('Source not set yet');
+			}
+		} else {
+			socket.emit('watch_error', 'No such session exists!');
+			console.log('session with id ' + sessionID + ' not found probably because it does not exist');
+		}
+	});
+	
 	socket.on('image', function(data) {
 		var sessionID = data.sessionID;
 		var stringData = data.stringData;

@@ -36,12 +36,16 @@
 				<div id="sessionField"/>
 			</center>
 			<img id="webstream" width="500px" height="375px"/>
+			<center>
+				<button id="sayvoice" style="display:none;" onclick="sendVoice();">ACTIVATE VOICE</button>
+			</center>
 		</div>
 
 		<script>
 			var socket = io();
 			var img = document.getElementById("webstream");
-
+			var session_id = "";
+			
 			socket.on('watch_error', function(msg) {
 				alert(msg);
 			});
@@ -51,28 +55,35 @@
 			});
 			
 			socket.on('startSessionSuccess', function(sessionID) {
+				session_id = sessionID;
 				document.getElementById("sessionField").innerHTML = "Session ID: " + sessionID; 
 				document.getElementById("startSession").style.display = "none";
 				document.getElementById("sessionIDField").style.display = "none";
 				document.getElementById("joinSession").style.display = "none";
+				document.getElementById("sayvoice").style.display = "block";
 			});
 			
 			socket.on('joinSessionSuccess', function() {
 				var sessionID = document.getElementById("sessionIDField").value;
+				session_id = sessionID;
 				document.getElementById("sessionField").innerHTML = "Session ID: " + sessionID; 
 				document.getElementById("startSession").style.display = "none";
 				document.getElementById("sessionIDField").style.display = "none";
 				document.getElementById("joinSession").style.display = "none";
+				document.getElementById("sayvoice").style.display = "block";
 			});
 			
 			function startSession() {
 				socket.emit("startSession");
-
 			}
 			
 			function joinSession() {
 				var sessionID = document.getElementById("sessionIDField").value;
 				socket.emit("joinSession", sessionID);
+			}
+			
+			function sendVoice() {
+				socket.emit("sendVoice", session_id);
 			}
 		</script>
 	</body>
