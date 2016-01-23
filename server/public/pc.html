@@ -39,12 +39,10 @@
 		<div id="container">
 			
 
-			<!-- 
-			<video autoplay="true" id="videoElement" width="500px" height="375px">
-			 
-			</video>
 			
-			<center><button id="hideALL" onclick="hideAll();">HIDE</button></center> -->
+			<video autoplay="true" id="videoElement" width="500px" height="375px"></video>
+			
+	<!-- 		<center><button id="hideALL" onclick="hideAll();">HIDE</button></center> -->
 
 			<div class="eye">
 				<img src="img/eye.png">					
@@ -58,7 +56,7 @@
 				<ul>
 					<li>1 - Visit this website on your mobile device</li>
 					<li>2 - Get the 4 digit code to pair your device</li>
-					<li>3 - You can now monitor your space remotely!</li>
+					<li>3 - Monitor your space remotely!</li>
 				</ul>
 			</div>
 
@@ -98,7 +96,7 @@
 					navigator.getUserMedia({video: true}, handleVideo, videoError);
 				}
 				
-				document.getElementById("topInfo").style.display = "none";
+				// document.getElementById("topInfo").style.display = "none";
 			});
 			
 			socket.on('sayVoiceMessages', function(data) {

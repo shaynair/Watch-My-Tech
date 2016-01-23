@@ -199,3 +199,7 @@ button.getcode {
 	padding-top:15px;
 
 }
+
+#videoElement {
+	display:none;
+}
