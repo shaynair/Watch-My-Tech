@@ -4,7 +4,7 @@ var path = require('path');
 var fs = require("fs");
 var uuid = require('node-uuid');
 
-var sessions = [];
+
 
 app.use(express.static(__dirname + '/public'));
 
@@ -22,29 +22,24 @@ var server = app.listen(3000, function () {
 
 var imagemod = 10;
 var imagecount = 0;
+var sessions = [];
+var sessionMAINID = 1000;
 var io = require('socket.io').listen(server);
 
 io.on('connection', function(socket){
 	socket.on('startSession', function() {
-		if (socket.id in sessions) {
-			socket.emit('watch_error', 'failed to start a session with phone client with id ' + socket.id);
-			console.log('failed to start a session with phone client with id ' + socket.id);
-		} else {
-			sessions[socket.id] = {
-				'clients' : [socket],
-				'source' : null
-			};
-			socket.emit('startSessionSuccess', socket.id);
-			console.log('set up phone client with id ' + socket.id);
-		}
+		sessions[sessionMAINID] = {
+			'clients' : [socket],
+			'source' : null
+		};
+		socket.emit('startSessionSuccess', sessionMAINID);
+		console.log('set up phone client with id ' + sessionMAINID);
+		socket["sessionMAINID"] = sessionMAINID;
+		sessionMAINID += 1;
 	});
 	
 	socket.on('joinSession', function(sessionID) {
-		console.log(sessionID);
-		if (socket.id in sessions) {
-			socket.emit('watch_error', 'Cannot join this session because you already created it?!');
-			console.log('phone did not join session with id ' + sessionID + ' probably because you created it');
-		} else if (sessionID in sessions) {
+		if (sessionID in sessions) {
 			sessions[sessionID].clients.push(socket);
 			socket.emit('joinSessionSuccess', '');
 			console.log('phone joined session with id ' + sessionID);
@@ -111,7 +106,7 @@ io.on('connection', function(socket){
 	socket.on('disconnect', function() {
 		for(var prop in sessions) {
 			if (sessions.hasOwnProperty(prop)) {
-				if (sessions[prop].source == socket.id) {
+				if (prop === socket["sessionMAINID"]) {
 					delete sessions[prop];
 					console.log('a source left');
 					return;
