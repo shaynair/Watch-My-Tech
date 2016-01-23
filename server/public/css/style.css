@@ -1,3 +1,8 @@
+* {
+	box-sizing: border-box;
+
+}
+
 html, body {
 	height:100%;
 	width:100%;
@@ -51,8 +56,7 @@ body {
 }
 
 #webstream {
-	height:500px;
-	width:320px;
+	width:100%;
 /*	z-index:99;*/
 }
 
@@ -66,5 +70,60 @@ button.getcode {
 
 #sessionField {
 	color:#ececec;
-	font-size:30px;
+	font-size:45px;
+}
+
+.action {
+	text-align:center;
+	position:relative;
+	top:50%;
+}
+
+.action button {
+	background:transparent;
+    border: 2px solid #fff;
+    border-radius: 25px;
+    color: #fff;
+    font-size: 14px;
+    padding: 15px;
+}
+
+.action form input {
+	background:transparent;
+    border: 2px solid #fff;
+    border-radius: 25px;
+    color: #fff;
+    font-size: 16px;
+    padding: 15px;
+    margin-top:30px;
+    width:80%;
+    text-align: center;
+
+}
+
+::-webkit-input-placeholder {
+    color:rgba(255,255,255,0.6);
+    text-align:center;
+
+}
+:-moz-placeholder {
+    color:rgba(255,255,255,0.6);
+    text-align:center;
+}
+::-moz-placeholder {
+    color:rgba(255,255,255,0.6);
+    text-align:center;
+}
+:-ms-input-placeholder {
+    color:rgba(255,255,255,0.6);
+    text-align:center;
+}
+
+.action form input[type="submit"] {
+	background:#fff;
+    border-radius: 25px;
+    color: #00b8fc;
+    font-size: 16px;
+    padding: 15px;
+    width:30%;
 }

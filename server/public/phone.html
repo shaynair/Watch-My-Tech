@@ -36,23 +36,41 @@
 			<!-- <input type="text" id="sessionIDField"/><button id="joinSession" onclick="joinSession();">Join Session</button> -->
 			<div id="sessionField"></div>
 			
+		</div>
 
+		<div id="action" class="action">
 
-			<!-- <button id="sayvoice" style="display:none;" onclick="sendVoice();">ACTIVATE VOICE</button> -->
+			<button id="sayvoice" onclick="sendVoice();">Stop thief! You are on camera</button>
+
+			<form>
+				<input type="text" placeholder="Broadcast a custom message"></input>
+				<input type="submit">
+			</form>
+
 		</div>
 
 		<script>
 			var socket = io();
 			var img = document.getElementById("webstream");
 			var session_id = "";
-			
+			var stream_on = false;
+
+
 			socket.on('watch_error', function(msg) {
 				alert(msg);
 			});
 			
+
 			socket.on('image', function(data) {
 				img.src = data;
+				if (!stream_on) {
+					stream_on = true;
+					document.getElementById("container").style.display = "none";
+					document.getElementById("action").style.display = "block";
+				}
 			});
+
+
 			
 			socket.on('startSessionSuccess', function(sessionID) {
 				session_id = sessionID;
