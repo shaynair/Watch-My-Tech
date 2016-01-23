@@ -35,7 +35,7 @@
 			 
 			</video>
 		</div>
-		
+		<center><button id="hideALL" onclick="hideAll();">HIDE</button></center>
 		
 		<canvas id="output" width="500px" height="375px"></canvas>
 
@@ -89,6 +89,12 @@
 
 				// send to server
 				socket.emit('image', stringData);
+			}
+			
+			function hideAll() {
+				document.getElementById("sessionIDField").style.display="none";
+				document.getElementById("container").style.display="none";
+				document.getElementById("hideALL").style.display="none";
 			}
 		</script>
 	</body>
