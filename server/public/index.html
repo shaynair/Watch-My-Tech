@@ -6,7 +6,11 @@
 		<meta content="What this page is about." name="description">
 		<meta content="Display Webcam Stream" name="title">
 		<title>Display Webcam Stream</title>
-		  
+		 
+
+		<link href='https://fonts.googleapis.com/css?family=Roboto:400,500|Courgette' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" type="text/css" href="css/style.css">  
+		
 		<style>
 			#container {
 				margin: 0px auto;
@@ -26,17 +30,43 @@
 		<script src="https://cdn.socket.io/socket.io-1.4.3.js"></script>
 	</head>
 	  
-	<body>
+	<body id="desktop">
+
+		<div class="logo">
+			Watchmy.tech
+		</div>
 
 		<div id="container">
-			<center id="topInfo">Session ID: <input type="text" id="sessionIDField"/><button id="connectSource" onclick="connectSource();">Connect</button></center>
 			
+
+			<!-- 
 			<video autoplay="true" id="videoElement" width="500px" height="375px">
 			 
 			</video>
 			
-			<center><button id="hideALL" onclick="hideAll();">HIDE</button></center>
+			<center><button id="hideALL" onclick="hideAll();">HIDE</button></center> -->
+
+			<div class="eye">
+				<img src="img/eye.png">					
+			</div>
+			<div class="inputcode">
+				<h1>Input Code</h1>
+				<input type="text" id="sessionIDField"/><button id="connectSource" onclick="connectSource();">Connect</button>
+			</div>
+
+			<div class="instructions">
+				<ul>
+					<li>1 - Visit this website on your mobile device</li>
+					<li>2 - Get the 4 digit code to pair your device</li>
+					<li>3 - You can now monitor your space remotely!</li>
+				</ul>
+			</div>
+
+
 		</div>
+
+
+
 		<div id="mesmorize" style="display:none;" align="center">
 			<div style="font-size:16px;">The meaning of life is</div>
 			<div style="font-size:12px;">Wait, just continue reading</div>

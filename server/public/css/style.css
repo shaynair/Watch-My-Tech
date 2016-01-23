@@ -9,10 +9,28 @@ html, body {
 	margin:0;
 }
 
+body#desktop {
+	background:#2c2c2c;
+}
+
 body {
 	background:#00b8fc;
 	font-family: 'Roboto', sans-serif;
 	z-index:1;
+}
+
+.logo {
+	font-family: 'Courgette', cursive;
+	color:#00b8fc;
+	font-size:20px;
+	padding:20px;
+}
+
+#desktop #container {
+	position:relative;
+	top:38%;
+	transform: translateY(-50%);
+	text-align:center;
 }
 
 #container {
@@ -42,6 +60,11 @@ body {
 
 .eye {
 	margin-bottom:30px;
+}
+
+
+#desktop .eye img {
+	max-width:200px;
 }
 
 .eye img {
@@ -138,4 +161,41 @@ button.getcode {
     padding: 15px;
     width:30%;
 	cursor:pointer;
+}
+
+
+.inputcode h1 {
+	color:rgba(255,255,255,0.6);
+	font-weight:500;
+	font-size:28px;
+}
+
+.inputcode input {
+	background:transparent;
+	border:1px solid #fff;
+	padding:10px;
+	font-size:14px;
+	color:#fff;
+}
+
+.inputcode button {
+	padding:10px;
+	background:#fff;
+	color:#2c2c2c;
+	border:1px solid #fff;
+	font-size:14px;
+	font-weight:500;
+}
+
+.instructions ul {
+	list-style:none;
+	text-align:center;
+	padding:10px 0 0 0;
+
+}
+
+.instructions ul li {
+	color:rgba(255,255,255,0.4);
+	padding-top:15px;
+
 }
