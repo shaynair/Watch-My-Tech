@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta content="stuff, to, help, search, engines, not" name="keywords">
+		<meta content="What this page is about." name="description">
+		<meta content="Display Webcam Stream" name="title">
+		<title>Display Webcam Stream</title>
+		  
+		<style>
+			#container {
+				margin: 0px auto;
+				width: 500px;
+				height: 375px;
+				border: 10px #333 solid;
+			}
+			#videoElement {
+				width: 500px;
+				height: 375px;
+				background-color: #666;
+			}
+			#output {
+				display:none;
+			}
+		</style>
+		
+		<script src="https://cdn.socket.io/socket.io-1.4.3.js"></script>
+	</head>
+	  
+	<body>
+	<div id="container">
+		<video autoplay="true" id="videoElement" width="500px" height="375px">
+		 
+		</video>
+	</div>
+
+		<canvas id="output" width="500px" height="375px"></canvas>
+
+		<script>
+			var socket = io();
+			var video = document.getElementById("videoElement");
+			
+			video.onloadedmetadata = function() {
+				setTimeout(function() {
+					setInterval(function() {
+						show_video();
+					}, 1);
+				}, 1000);
+			};
+			
+			navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
+			 
+			if (navigator.getUserMedia) {       
+				navigator.getUserMedia({video: true}, handleVideo, videoError);
+			}
+			 
+			function handleVideo(stream) {
+				video.src = window.URL.createObjectURL(stream);
+			}
+			 
+			function videoError(e) {
+				// do something
+			}
+
+			function show_video() {
+				var back = document.getElementById('output');
+				var backcontext = back.getContext('2d');
+				var cw = back.width;
+				var ch = back.height;
+				draw(back, video, backcontext, cw, ch);
+			}
+			
+			function draw(back, v, bc, w, h) {
+			
+				// First, draw it into the backing canvas
+				bc.drawImage(v, 0, 0, w, h);
+				
+				// Grab the pixel data from the backing canvas
+				var stringData = back.toDataURL();
+
+				// send to server
+				socket.emit('image', stringData);
+			}
+		</script>
+	</body>
+</html>
