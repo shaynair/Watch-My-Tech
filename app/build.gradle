@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "hack.seizure"
+        applicationId "hack.watch"
         minSdkVersion 19
         targetSdkVersion 23
         versionCode 1
