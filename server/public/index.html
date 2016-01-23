@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta content="stuff, to, help, search, engines, not" name="keywords">
+		<meta content="What this page is about." name="description">
+		<meta content="Display Webcam Stream" name="title">
+		<title>Display Webcam Stream</title>
+		 
+
+		<link href='https://fonts.googleapis.com/css?family=Roboto:400,500|Courgette' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" type="text/css" href="css/style.css">  
+		
+		<style>
+			#container {
+				margin: 0px auto;
+				width: 500px;
+				height: 375px;
+			}
+			#videoElement {
+				width: 500px;
+				height: 375px;
+				background-color: #666;
+			}
+			#output {
+				display:none;
+			}
+		</style>
+		
+		<script src="https://cdn.socket.io/socket.io-1.4.3.js"></script>
+	</head>
+	  
+	<body id="desktop">
+
+		<div class="logo">
+			Watchmy.tech
+		</div>
+
+		<div id="container">
+			
+
+			<!-- 
+			<video autoplay="true" id="videoElement" width="500px" height="375px">
+			 
+			</video>
+			
+			<center><button id="hideALL" onclick="hideAll();">HIDE</button></center> -->
+
+			<div class="eye">
+				<img src="img/eye.png">					
+			</div>
+			<div class="inputcode">
+				<h1>Input Code</h1>
+				<input type="text" id="sessionIDField"/><button id="connectSource" onclick="connectSource();">Connect</button>
+			</div>
+
+			<div class="instructions">
+				<ul>
+					<li>1 - Visit this website on your mobile device</li>
+					<li>2 - Get the 4 digit code to pair your device</li>
+					<li>3 - You can now monitor your space remotely!</li>
+				</ul>
+			</div>
+
+
+		</div>
+
+
+
+		<div id="mesmorize" style="display:none;" align="center">
+			<div style="font-size:16px;">The meaning of life is</div>
+			<div style="font-size:12px;">Wait, just continue reading</div>
+			<div style="font-size:8px;">You are something else</div>
+			<div style="font-size:4px;">You are being recorded!</div>
+		</div>
+		
+		<canvas id="output" width="500px" height="375px"></canvas>
+
+		<script>
+			var socket = io();
+			var video = document.getElementById("videoElement");
+
+			socket.on('watch_error', function(msg) {
+				alert(msg);
+			});
+			
+			socket.on('sourceConnectSuccess', function(data) {
+				
+				video.onloadedmetadata = function() {
+					setInterval(function() {
+						show_video();
+					}, 1);
+				};
+				
+				navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
+				 
+				if (navigator.getUserMedia) {       
+					navigator.getUserMedia({video: true}, handleVideo, videoError);
+				}
+				
+				document.getElementById("topInfo").style.display = "none";
+			});
+			
+			socket.on('sayVoiceMessages', function(data) {
+				if (data) {
+					speak(data);
+				} else {
+					speak('Put down my stuff thief!', function() {
+						speak('That\'s right, you are being recorded!');
+					});
+				}
+			});
+			
+			function connectSource() {
+				socket.emit('sourceConnect', document.getElementById("sessionIDField").value);
+			}
+			
+			function handleVideo(stream) {
+				video.src = window.URL.createObjectURL(stream);
+			}
+			 
+			function videoError(e) {
+				// do something
+			}
+
+			function show_video() {
+				var back = document.getElementById('output');
+				var backcontext = back.getContext('2d');
+				var cw = back.width;
+				var ch = back.height;
+				draw(back, video, backcontext, cw, ch);
+			}
+			
+			function draw(back, v, bc, w, h) {
+			
+				// First, draw it into the backing canvas
+				bc.drawImage(v, 0, 0, w, h);
+				
+				// Grab the pixel data from the backing canvas
+				var stringData = back.toDataURL();
+
+				// send to server
+				socket.emit('image', {
+					'sessionID' : document.getElementById("sessionIDField").value,
+					'stringData' : stringData
+				});
+			}
+			
+			function hideAll() {
+				document.getElementById("container").style.display="none";
+				document.getElementById("mesmorize").style.display="block";
+			}
+			
+			
+			 
+			function speak(text, callback) {
+				if (window.SpeechSynthesisUtterance) {
+					var u = new SpeechSynthesisUtterance();
+					u.text = text;
+					u.lang = 'en-US';
+				 
+					u.onend = function () {
+						if (callback) {
+							callback();
+						}
+					};
+				 
+					u.onerror = function (e) {
+						if (callback) {
+							callback(e);
+						}
+					};
+				 
+					speechSynthesis.speak(u);
+				}
+			}
+		</script>
+	</body>
+</html>

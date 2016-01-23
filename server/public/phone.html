@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta content="stuff, to, help, search, engines, not" name="keywords">
+		<meta content="What this page is about." name="description">
+		<meta content="Display Webcam Stream" name="title">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+		<title>Display Webcam Stream</title>
+
+		<link href='https://fonts.googleapis.com/css?family=Roboto:400,300,500,700' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+
+		<script src="https://cdn.socket.io/socket.io-1.4.3.js"></script>
+		<script src="https://code.jquery.com/jquery-3.0.0-beta1.min.js"></script>
+	</head>
+	  
+	<body>
+		<div class="webstream-container" align="center">
+			<img id="webstream"/>
+		</div>
+		
+		<div class="phone" id="container">
+			<div class="instructions">
+				<div class="goto">Go to</div>
+				<div class="watchmytech">watchmy.tech</div>
+			</div>
+
+			<div class="eye">
+				<img src="img/eye.png">					
+			</div>
+
+			<button class="getcode" id="startSession">Get Code</button>
+
+			<div class="code"></div>
+			<!-- <input type="text" id="sessionIDField"/><button id="joinSession" onclick="joinSession();">Join Session</button> -->
+			<div id="sessionField"></div>
+			
+		</div>
+
+		<div id="action">
+
+			<button id="sayvoice" onclick="sendVoice();">Stop thief! You are on camera</button>
+
+			<form id="broadcastForm">
+				<input type="text" placeholder="Broadcast a custom message" id="broadcastMessage"></input>
+				<input type="submit">
+			</form>
+
+		</div>
+
+		<script>
+			var socket = io();
+			var img = document.getElementById("webstream");
+			var session_id = "";
+			var stream_on = false;
+
+
+			socket.on('watch_error', function(msg) {
+				alert(msg);
+			});
+			
+
+			socket.on('image', function(data) {
+				img.src = data;
+				if (!stream_on) {
+					stream_on = true;
+					document.getElementById("container").style.display = "none";
+					document.getElementById("action").style.display = "block";
+				}
+			});
+
+
+			
+			socket.on('startSessionSuccess', function(sessionID) {
+				session_id = sessionID;
+				document.getElementById("sessionField").innerHTML = sessionID; 
+				// document.getElementById("startSession").style.display = "none";
+				// document.getElementById("sessionIDField").style.display = "none";
+				// document.getElementById("joinSession").style.display = "none";
+				// document.getElementById("sayvoice").style.display = "block";
+			});
+			
+			socket.on('joinSessionSuccess', function() {
+				var sessionID = document.getElementById("sessionIDField").value;
+				session_id = sessionID;
+				document.getElementById("sessionField").innerHTML = sessionID; 
+				document.getElementById("startSession").style.display = "none";
+				// document.getElementById("sessionIDField").style.display = "none";
+				// document.getElementById("joinSession").style.display = "none";
+				// document.getElementById("sayvoice").style.display = "block";
+			});
+			
+			socket.on('customBroadCastSuccess', function() {
+				document.getElementById("broadcastMessage").value = "";
+			});
+			
+			function startSession() {
+				socket.emit("startSession");
+			}
+			
+			function joinSession() {
+				var sessionID = document.getElementById("sessionIDField").value;
+				socket.emit("joinSession", sessionID);
+			}
+			
+			function sendVoice() {
+				socket.emit("sendVoice", session_id);
+			}
+			
+			$( "#broadcastForm" ).submit(function( event ) {
+				var msg = document.getElementById("broadcastMessage").value;
+				if (msg.trim() != "") {
+					socket.emit("customBroadCast", {
+						'sessionID' : session_id,
+						'message' : msg
+					});
+				}
+				return false;
+			});
+			
+			startSession();
+
+		</script>
+	</body>
+</html>
