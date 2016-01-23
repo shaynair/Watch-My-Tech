@@ -75,8 +75,9 @@ button.getcode {
 
 .action {
 	text-align:center;
-	position:relative;
+	position:absolute;
 	top:50%;
+	display:none;
 }
 
 .action button {
