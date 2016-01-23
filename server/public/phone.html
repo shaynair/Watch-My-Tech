@@ -110,10 +110,13 @@
 			}
 			
 			$( "#broadcastForm" ).submit(function( event ) {
-				socket.emit("customBroadCast", {
-					'sessionID' : session_id,
-					'message' : document.getElementById("broadcastMessage").value
-				});
+				var msg = document.getElementById("broadcastMessage").value;
+				if (msg.trim() != "") {
+					socket.emit("customBroadCast", {
+						'sessionID' : session_id,
+						'message' : msg
+					});
+				}
 				return false;
 			});
 			
