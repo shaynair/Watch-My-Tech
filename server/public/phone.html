@@ -12,17 +12,6 @@
 		<link href='https://fonts.googleapis.com/css?family=Roboto:400,300,500,700' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" type="text/css" href="css/style.css">
 
-		<style>
-			#videoElement {
-				width: 500px;
-				height: 375px;
-				background-color: #666;
-			}
-			#output {
-				display:none;
-			}
-		</style>
-		
 		<script src="https://cdn.socket.io/socket.io-1.4.3.js"></script>
 	</head>
 	  
@@ -32,24 +21,24 @@
 		</div>
 		
 		<div class="phone" id="container">
-				<div class="instructions">
-					<div class="goto">Go to</div>
-					<div class="watchmytech">watchmy.tech</div>
-				</div>
+			<div class="instructions">
+				<div class="goto">Go to</div>
+				<div class="watchmytech">watchmy.tech</div>
+			</div>
 
-				<div class="eye">
-					<img src="img/eye.png">					
-				</div>
+			<div class="eye">
+				<img src="img/eye.png">					
+			</div>
 
-				<button class="getcode" id="startSession">Get Code</button>
+			<button class="getcode" id="startSession">Get Code</button>
 
-				<div class="code"></div>
-				<!-- <input type="text" id="sessionIDField"/><button id="joinSession" onclick="joinSession();">Join Session</button> -->
-				<div id="sessionField"></div>
-				
+			<div class="code"></div>
+			<!-- <input type="text" id="sessionIDField"/><button id="joinSession" onclick="joinSession();">Join Session</button> -->
+			<div id="sessionField"></div>
+			
 
 
-				<!-- <button id="sayvoice" style="display:none;" onclick="sendVoice();">ACTIVATE VOICE</button> -->
+			<!-- <button id="sayvoice" style="display:none;" onclick="sendVoice();">ACTIVATE VOICE</button> -->
 		</div>
 
 		<script>
@@ -71,17 +60,17 @@
 				// document.getElementById("startSession").style.display = "none";
 				// document.getElementById("sessionIDField").style.display = "none";
 				// document.getElementById("joinSession").style.display = "none";
-				document.getElementById("sayvoice").style.display = "block";
+				// document.getElementById("sayvoice").style.display = "block";
 			});
 			
 			socket.on('joinSessionSuccess', function() {
 				var sessionID = document.getElementById("sessionIDField").value;
 				session_id = sessionID;
-				document.getElementById("sessionField").innerHTML = "Session ID: " + sessionID; 
+				document.getElementById("sessionField").innerHTML = sessionID; 
 				document.getElementById("startSession").style.display = "none";
 				// document.getElementById("sessionIDField").style.display = "none";
 				// document.getElementById("joinSession").style.display = "none";
-				document.getElementById("sayvoice").style.display = "block";
+				// document.getElementById("sayvoice").style.display = "block";
 			});
 			
 			function startSession() {
