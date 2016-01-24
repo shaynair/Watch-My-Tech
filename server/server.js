@@ -92,10 +92,12 @@ io.on('connection', function(socket){
 	});
 	
 	socket.on('image', function(dataX) {
-		if (sessionID in sessions) {
-			var sessionID = dataX.sessionID;
-			var dataList = dataX.frames;
+
+		var sessionID = dataX.sessionID;
+		var dataList = dataX.frames;
 		
+		if (sessionID in sessions) {
+			
 			var listOfClients = sessions[sessionID].clients;
 			for(var i=0; i<listOfClients.length; i+=1) {
 				listOfClients[i].emit('image', dataList);
@@ -104,8 +106,6 @@ io.on('connection', function(socket){
 
 			for(var i=0; i<dataList.length; i+=1) {
 				var data = dataList[i];
-
-
 				if (data.faces.length > 0) {
 					if (countNum % countMod == 0) {
 						var base64Data = data.stringData.replace(/^data:image\/png;base64,/, "");
