@@ -46,13 +46,25 @@
 			
 	<!-- 		<center><button id="hideALL" onclick="hideAll();">HIDE</button></center> -->
 
-			<div class="eye">
-				<img src="img/eye.png">					
-			</div>
-			<div class="inputcode">
-				<h1>Input Code</h1>
-				<input type="text" id="sessionIDField"/><button id="connectSource" onclick="connectSource();">Connect</button>
-			</div>
+			<div class="flip-container" id="flip-container">
+  				<div class="flipper">
+  					<div class="front">
+  						<img src="img/eye2.png">		
+ 					</div>
+ 					<div class="back">
+ 						<img src="img/eye_shield-bl2.png">		
+ 					</div>
+  				</div>
+  			</div>
+
+  				<div class="inputcode" id="inputcode">
+	  				<h1>Input Code</h1>
+	  				<input type="text" id="sessionIDField"/><button id="connectSource" onclick="connectSource();">Connect</button>
+	  			</div>
+  			  
+			<div class="connected" id="connected">
+  			 	<h1>Connected. Live stream in progress</h1>
+  			 </div>
 
 			<div class="instructions">
 				<ul>
@@ -125,7 +137,12 @@
 					};
 					navigator.getUserMedia({audio: false, video: true}, handleVideo, videoError);
 				}
-				
+					
+				document.getElementById('flip-container').classList.toggle('hover');
+				document.getElementById('inputcode').style.display = "none";
+				document.getElementById('connected').style.display = "block";
+
+
 				// document.getElementById("topInfo").style.display = "none";
 			});
 			
