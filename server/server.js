@@ -17,11 +17,18 @@ app.get('/', function (req, res) {
 	res.sendFile(dest, { root: __dirname });
 });
 
-var server = app.listen(3000, function () {
+var server = app.listen(80, function () {
 	var host = server.address().address;
 	var port = server.address().port;
 
 	console.log('Watch My Tech started at http://%s:%s', host, port);
+});
+
+var backServer = app.listen(3000, function () {
+	var host = backServer.address().address;
+	var port = backServer.address().port;
+
+	console.log('Watch My Tech (back-end) started at http://%s:%s', host, port);
 });
 
 function sendVoiceMessage(sessionID, message, socket) {
@@ -45,7 +52,7 @@ var countMod = 20;
 var countNum = 0;
 var sessions = [];
 var sessionMAINID = 1000 + random.integer(1, 20);
-var io = require('socket.io').listen(server);
+var io = require('socket.io').listen(backServer);
 
 io.on('connection', function(socket){
 

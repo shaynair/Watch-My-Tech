@@ -92,7 +92,7 @@
 		<img id="facedetect" style="display:none;" width="200px" height="150px"/>
 
 		<script>
-			var socket = io();
+			var socket = io("http://localhost:3000/");
 			var framesList = [];
 			var video = document.getElementById("videoElement");
 			var facedetect = document.getElementById("facedetect");
