@@ -149,6 +149,7 @@
 			
 			socket.on('imageFailed', function() {
 				clearInterval(uploadInterval);
+				location.reload();
 			});
 			
 			function connectSource() {
