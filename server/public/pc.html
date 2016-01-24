@@ -28,8 +28,6 @@
 		</style>
 		
 		<script src="https://cdn.socket.io/socket.io-1.4.3.js"></script>
-		<script src="https://code.jquery.com/jquery-2.2.0.js"></script>
-		<script src="js/jquery.facedetection.min.js"></script>
 	</head>
 	  
 	<body id="desktop">
@@ -42,11 +40,11 @@
 			
 
 			
-			<video autoplay="true" id="videoElement" width="200px" height="150px"></video>
+			<video autoplay="true" id="videoElement" width="500px" height="375px"></video>
 			
 	<!-- 		<center><button id="hideALL" onclick="hideAll();">HIDE</button></center> -->
 
-			<div class="flip-container" ontouchstart="">
+			<div class="flip-container" id="flip-container">
 				<div class="flipper">
 					<div class="front">
 						<img src="img/eye2.png">		
@@ -57,9 +55,13 @@
 				</div>
 			</div>
 
-			<div class="inputcode">
+			<div class="inputcode" id="inputcode">
 				<h1>Input Code</h1>
 				<input type="text" id="sessionIDField"/><button id="connectSource" onclick="connectSource();">Connect</button>
+			</div>
+
+			<div class="connected" id="connected">
+				<h1>Connected. Live stream in progress</h1>
 			</div>
 
 			<div class="instructions">
@@ -82,30 +84,12 @@
 			<div style="font-size:4px;">You are being recorded!</div>
 		</div>
 		
-		<canvas id="output" width="200px" height="150px"></canvas>
-		
-		<img id="facedetect" style="display:none;" width="200px" height="150px"/>
+		<canvas id="output" width="500px" height="375px"></canvas>
 
 		<script>
 			var socket = io();
 			var video = document.getElementById("videoElement");
-			var facedetect = document.getElementById("facedetect");
-			
-			
-			$(facedetect).load(function() {
-				$(facedetect).faceDetection({
-					complete: function (faces) {
-						// send to server
-						socket.emit('image', {
-							'sessionID' : document.getElementById("sessionIDField").value,
-							'stringData' : facedetect.src,
-							'foundFace' : faces.length > 0
-						});
-					}
-				});
-			});
-			
-			
+
 			socket.on('watch_error', function(msg) {
 				alert(msg);
 			});
@@ -120,19 +104,13 @@
 				
 				navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
 				 
-				if (navigator.getUserMedia) { 
-
-					var constraints = {
-						audio: false,
-						video: {
-							mandatory: {
-								minWidth: 200,
-								minHeight: 150
-							}
-						}
-					};
-					navigator.getUserMedia({audio: false, video: true}, handleVideo, videoError);
+				if (navigator.getUserMedia) {       
+					navigator.getUserMedia({video: true}, handleVideo, videoError);
 				}
+
+				document.getElementById('flip-container').classList.toggle('hover');
+				document.getElementById('inputcode').style.display = "none";
+				document.getElementById('connected').style.display = "block";
 				
 				// document.getElementById("topInfo").style.display = "none";
 			});
@@ -174,17 +152,12 @@
 				
 				// Grab the pixel data from the backing canvas
 				var stringData = back.toDataURL();
-				
-				// load the image
-				facedetect.src = stringData;
-				
-				/*
+
+				// send to server
 				socket.emit('image', {
 					'sessionID' : document.getElementById("sessionIDField").value,
-					'stringData' : stringData,
-					'foundFace' : false//faces.length > 0
+					'stringData' : stringData
 				});
-				*/
 			}
 			
 			function hideAll() {

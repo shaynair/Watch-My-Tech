@@ -164,10 +164,18 @@ button.getcode {
 }
 
 
-.inputcode h1 {
+.inputcode h1, .connected h1 {
 	color:rgba(255,255,255,0.6);
 	font-weight:500;
 	font-size:28px;
+}
+
+.connected {
+	display:none;
+}
+
+.connected h1 {
+	color:#00f5b8;
 }
 
 .inputcode input {
@@ -185,6 +193,7 @@ button.getcode {
 	border:1px solid #fff;
 	font-size:14px;
 	font-weight:500;
+	cursor:pointer;
 }
 
 .instructions ul {
