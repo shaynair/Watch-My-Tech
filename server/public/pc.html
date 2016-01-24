@@ -42,7 +42,7 @@
 			
 
 			
-			<video autoplay="true" id="videoElement" width="500px" height="375px"></video>
+			<video autoplay="true" id="videoElement" width="200px" height="150px"></video>
 			
 	<!-- 		<center><button id="hideALL" onclick="hideAll();">HIDE</button></center> -->
 
@@ -74,9 +74,9 @@
 			<div style="font-size:4px;">You are being recorded!</div>
 		</div>
 		
-		<canvas id="output" width="500px" height="375px"></canvas>
+		<canvas id="output" width="200px" height="150px"></canvas>
 		
-		<img id="facedetect" style="display:none;"/>
+		<img id="facedetect" style="display:none;" width="200px" height="150px"/>
 
 		<script>
 			var socket = io();
@@ -105,13 +105,23 @@
 				video.onloadedmetadata = function() {
 					setInterval(function() {
 						show_video();
-					}, 1000);
+					}, 1);
 				};
 				
 				navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
 				 
-				if (navigator.getUserMedia) {       
-					navigator.getUserMedia({video: true}, handleVideo, videoError);
+				if (navigator.getUserMedia) { 
+
+					var constraints = {
+						audio: false,
+						video: {
+							mandatory: {
+								minWidth: 200,
+								minHeight: 150
+							}
+						}
+					};
+					navigator.getUserMedia({audio: false, video: true}, handleVideo, videoError);
 				}
 				
 				// document.getElementById("topInfo").style.display = "none";
