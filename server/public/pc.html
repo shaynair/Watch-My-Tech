@@ -217,6 +217,14 @@
 			}
 			
 			
+			
+			$("#sessionIDField").keyup(function(e) {
+				if (e.keyCode == 13) {
+					$("#connectSource").click();
+					return false;
+				}
+			});
+			 
 			 
 			function speak(text, callback) {
 				if (window.SpeechSynthesisUtterance) {
