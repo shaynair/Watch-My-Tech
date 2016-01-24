@@ -41,7 +41,7 @@ function sendVoiceMessage(sessionID, message, socket) {
 	}
 }
 
-var countMod = 5;
+var countMod = 20;
 var countNum = 0;
 var sessions = [];
 var sessionMAINID = 1000 + random.integer(1, 20);
@@ -101,27 +101,28 @@ io.on('connection', function(socket){
 			for(var i=0; i<listOfClients.length; i+=1) {
 				listOfClients[i].emit('image', dataList);
 			}
+
+			for(var i=0; i<dataList.length; i+=1) {
+				var data = dataList[i];
+
+				if (data.faces.length > 0) {
+					if (countNum % countMod == 0) {
+						var base64Data = data.stringData.replace(/^data:image\/png;base64,/, "");
+						var filename = "out_" + uuid.v4() + ".png";
+						fs.writeFile("captures/" + filename, base64Data, 'base64', function(err) {
+							if (err) {
+								console.log(err);
+							} else {
+								console.log("Saved file " + filename);
+							}
+						});
+					}
+					countNum += 1;
+				}
+			}
+		
 		} else {
 			console.log('Could not send image to session with id ' + sessionID + ' probably because it does not exist');
-		}
-		
-		for(var i=0; i<dataList.length; i+=1) {
-			var data = dataList[i];
-
-			if (data.foundFace) {
-				if (countNum % countMod == 0) {
-					var base64Data = data.stringData.replace(/^data:image\/png;base64,/, "");
-					var filename = "out_" + uuid.v4() + ".png";
-					fs.writeFile("captures/" + filename, base64Data, 'base64', function(err) {
-						if (err) {
-							console.log(err);
-						} else {
-							console.log("Saved file " + filename);
-						}
-					});
-				}
-				countNum += 1;
-			}
 		}
 	});
 	

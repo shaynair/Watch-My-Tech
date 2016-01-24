@@ -69,7 +69,7 @@
 						var dat = recievedFrames[frameIndex];
 						img.src = dat.stringData;
 						
-						if (dat.foundFace && canVibrate) {
+						if (dat.faces.length > 0 && canVibrate) {
 							canVibrate = false;
 							setTimeout(function() {
 								canVibrate = true;
