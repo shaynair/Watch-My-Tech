@@ -7,6 +7,7 @@ html, body {
 	height:100%;
 	width:100%;
 	margin:0;
+	overflow-y: hidden;
 }
 
 body#desktop {
@@ -194,6 +195,25 @@ button.getcode {
 	font-size:14px;
 	font-weight:500;
 	cursor:pointer;
+}
+
+.inputcode button:hover {
+/*	background:rgba(255,255,255,0.7);*/
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#fffcfc+0,f2eaea+100 */
+	background: rgb(255,252,252); /* Old browsers */
+	background: -moz-linear-gradient(top, rgba(255,252,252,1) 0%, rgba(242,234,234,1) 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top, rgba(255,252,252,1) 0%,rgba(242,234,234,1) 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom, rgba(255,252,252,1) 0%,rgba(242,234,234,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fffcfc', endColorstr='#f2eaea',GradientType=0 ); /* IE6-9 */
+}
+
+.inputcode button:active {
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#e8e1e1+0,f9f7f7+99 */
+background: rgb(232,225,225); /* Old browsers */
+background: -moz-linear-gradient(top, rgba(232,225,225,1) 0%, rgba(249,247,247,1) 99%); /* FF3.6-15 */
+background: -webkit-linear-gradient(top, rgba(232,225,225,1) 0%,rgba(249,247,247,1) 99%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to bottom, rgba(232,225,225,1) 0%,rgba(249,247,247,1) 99%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e8e1e1', endColorstr='#f9f7f7',GradientType=0 ); /* IE6-9 */
 }
 
 .instructions ul {
