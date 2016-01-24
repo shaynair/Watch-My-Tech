@@ -3,7 +3,7 @@ var app = express();
 var path = require('path'); 
 var fs = require("fs");
 var uuid = require('node-uuid');
-
+var random = require("random-js")();
 
 
 app.use(express.static(__dirname + '/public'));
@@ -44,7 +44,7 @@ function sendVoiceMessage(sessionID, message, socket) {
 var countMod = 20;
 var countNum = 0;
 var sessions = [];
-var sessionMAINID = 1000;
+var sessionMAINID = 1000 + random.integer(1, 20);
 var io = require('socket.io').listen(server);
 
 io.on('connection', function(socket){
@@ -56,7 +56,7 @@ io.on('connection', function(socket){
 		};
 		socket.emit('startSessionSuccess', sessionMAINID);
 		console.log('set up phone client with id ' + sessionMAINID);
-		sessionMAINID += 1;
+		sessionMAINID += random.integer(1, 20);
 	});
 	
 	socket.on('joinSession', function(sessionID) {
@@ -138,6 +138,17 @@ io.on('connection', function(socket){
 					for(var i=0; i<clients.length; i+=1) {
 						if (clients[i].id == socket.id) {
 							clients.slice(i, 1);
+							
+							if (clients.length == 0) {
+								setTimeout(function() {
+									if (clients.length == 0) {
+										delete sessions[prop];
+										console.log('a source left because all clients left after, 3 minutes');
+										return;
+									}
+								}, 60 * 3);
+							}
+							
 							console.log('a phone client left');
 							return;
 						}

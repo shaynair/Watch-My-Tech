@@ -31,7 +31,7 @@
 				<img src="img/eye.png">					
 			</div>
 
-			<button class="getcode" id="startSession">Input this Code</button>
+			<button class="getcode" id="startSession">Get Code</button>
 
 			<div class="code"></div>
 			<!-- <input type="text" id="sessionIDField"/><button id="joinSession" onclick="joinSession();">Join Session</button> -->
@@ -41,7 +41,7 @@
 
 		<div id="action">
 
-			<button id="sayvoice" onclick="sendVoice();">Stop, you're being recorded!</button>
+			<button id="sayvoice" onclick="sendVoice();">Stop thief! You are on camera</button>
 
 			<form id="broadcastForm">
 				<input type="text" autocomplete="off" placeholder="Broadcast a custom message" id="broadcastMessage"></input>
@@ -79,6 +79,10 @@
 							}
 						}
 						frameIndex += 1;
+						if (frameIndex == recievedFrames.length) {
+							recievedFrames = [];
+							frameIndex = 0;
+						}
 					}
 					//console.log("Total " + recievedFrames.length + " index " + frameIndex);
 					runSchedule();
