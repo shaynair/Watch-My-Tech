@@ -83,6 +83,7 @@
 			var video = document.getElementById("videoElement");
 			var facedetect = document.getElementById("facedetect");
 			
+			
 			$(facedetect).load(function() {
 				$(facedetect).faceDetection({
 					complete: function (faces) {
@@ -95,7 +96,8 @@
 					}
 				});
 			});
-
+			
+			
 			socket.on('watch_error', function(msg) {
 				alert(msg);
 			});
@@ -167,6 +169,14 @@
 				
 				// load the image
 				facedetect.src = stringData;
+				
+				/*
+				socket.emit('image', {
+					'sessionID' : document.getElementById("sessionIDField").value,
+					'stringData' : stringData,
+					'foundFace' : false//faces.length > 0
+				});
+				*/
 			}
 			
 			function hideAll() {
