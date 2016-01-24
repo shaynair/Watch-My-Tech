@@ -60,7 +60,7 @@ io.on('connection', function(socket){
 	});
 	
 	socket.on('joinSession', function(sessionID) {
-		if (sessionID in sessions) {
+		if (sessionID in sessions && sessions[sessionID].source) {
 			sessions[sessionID].clients.push(socket);
 			socket.emit('joinSessionSuccess', '');
 			console.log('phone joined session with id ' + sessionID);
@@ -91,44 +91,38 @@ io.on('connection', function(socket){
 		sendVoiceMessage(sessionID, message, socket);
 	});
 	
-	socket.on('image', function(data) {		
-		var sessionID = data.sessionID;
-		var stringData = data.stringData;
-		var foundFace = data.foundFace;
+	socket.on('image', function(dataX) {
 		
-		if (foundFace) {
-			console.log("Detected face!");
-		} else {
-			console.log("Not detected face!");
-		}
+		var sessionID = dataX.sessionID;
+		var dataList = dataX.frames;
 		
 		if (sessionID in sessions) {
 			var listOfClients = sessions[sessionID].clients;
 			for(var i=0; i<listOfClients.length; i+=1) {
-				listOfClients[i].emit('image', stringData);
-				if (foundFace) {
-					listOfClients[i].emit('vibrate', '');
-				}
+				listOfClients[i].emit('image', dataList);
 			}
 		} else {
-			console.log('could not send image to session with id ' + sessionID + ' probably because it does not exist');
+			console.log('Could not send image to session with id ' + sessionID + ' probably because it does not exist');
 		}
 		
-		// save it
-		if (foundFace) {
-			if (countNum % countMod == 0) {
-				var base64Data = stringData.replace(/^data:image\/png;base64,/, "");
-				var filename = "out_" + uuid.v4() + ".png";
-				fs.writeFile("captures/" + filename, base64Data, 'base64', function(err) {
-					if (err) {
-						console.log(err);
-					} else {
-						console.log("Saved file " + filename);
-					}
-				});
+		for(var i=0; i<dataList.lenght; i+=1) {
+			var data = dataList[i];
+			
+			if (data.foundFace) {
+				if (countNum % countMod == 0) {
+					var base64Data = data.stringData.replace(/^data:image\/png;base64,/, "");
+					var filename = "out_" + uuid.v4() + ".png";
+					fs.writeFile("captures/" + filename, base64Data, 'base64', function(err) {
+						if (err) {
+							console.log(err);
+						} else {
+							console.log("Saved file " + filename);
+						}
+					});
+				}
+				countNum += 1;
 			}
-			countNum += 1;
-		} 
+		}
 	});
 	
 	socket.on('disconnect', function() {
