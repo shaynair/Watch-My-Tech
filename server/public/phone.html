@@ -52,18 +52,49 @@
 
 		<script>
 			var socket = io();
+			var recievedFrames = [];
+			var frameIndex = 0;
+			var canVibrate = true;
 			var img = document.getElementById("webstream");
 			var session_id = "";
 			var stream_on = false;
-
+			var scheduleVar = 150;
+			
+			function runSchedule() {
+				
+				scheduleVar = recievedFrames.length == 0 ? 150 : 3000 / (recievedFrames.length - frameIndex);
+			
+				setTimeout(function() {
+					if (frameIndex < recievedFrames.length) {
+						var dat = recievedFrames[frameIndex];
+						img.src = dat.stringData;
+						
+						if (dat.foundFace && canVibrate) {
+							canVibrate = false;
+							setTimeout(function() {
+								canVibrate = true;
+							}, 1000);
+							if (window.navigator && window.navigator.vibrate) {
+								navigator.vibrate(1000);
+							}
+						}
+						frameIndex += 1;
+					}
+					console.log("Total " + recievedFrames.length + " index " + frameIndex);
+					runSchedule();
+				}, scheduleVar);
+			};
+			runSchedule();
 
 			socket.on('watch_error', function(msg) {
 				alert(msg);
 			});
 			
 
-			socket.on('image', function(data) {
-				img.src = data;
+			socket.on('image', function(dataList) {
+				for(var i=0; i<dataList.length; i+=1) {
+					recievedFrames.push(dataList[i]);
+				}
 				if (!stream_on) {
 					stream_on = true;
 					document.getElementById("container").style.display = "none";
@@ -94,15 +125,6 @@
 			
 			socket.on('customBroadCastSuccess', function() {
 				document.getElementById("broadcastMessage").value = "";
-			});
-			
-			socket.on('vibrate', function() {
-				if (window.navigator && window.navigator.vibrate) {
-					// Shake that device!
-					navigator.vibrate(1000);
-				} else {
-				   // Not supported
-				}
 			});
 			
 			function startSession() {
