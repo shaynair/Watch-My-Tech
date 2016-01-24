@@ -60,7 +60,7 @@ io.on('connection', function(socket){
 	});
 	
 	socket.on('joinSession', function(sessionID) {
-		if (sessionID in sessions) {
+		if (sessionID in sessions && sessions[sessionID].source) {
 			sessions[sessionID].clients.push(socket);
 			socket.emit('joinSessionSuccess', '');
 			console.log('phone joined session with id ' + sessionID);
