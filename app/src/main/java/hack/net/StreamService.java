@@ -26,7 +26,6 @@ public class StreamService {
   private Socket socket;
 
   public void make() {
-    System.out.println("================Making socket!");
     try {
       IO.Options opts = new IO.Options();
       opts.transports = new String[]{"websocket"};
@@ -46,7 +45,6 @@ public class StreamService {
   }
 
   public void emit(String name, Object... args) {
-    System.out.println("================Emitted " + name);
     socket.emit(name, args);
   }
 
@@ -63,7 +61,6 @@ public class StreamService {
   }
 
   public void destroy() {
-    System.out.println("================Destroyed socket!");
     if (socket != null) {
       socket.disconnect();
       off();

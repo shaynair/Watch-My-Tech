@@ -27,11 +27,20 @@ public class MainActivity extends Activity {
     number = (TextView) findViewById(R.id.number);
     progress = (ProgressBar) findViewById(R.id.progress);
 
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+
+    progress.setVisibility(View.VISIBLE);
+    number.setText("");
     number.setFocusable(false);
     number.setClickable(false);
     number.setEnabled(false);
     number.setFocusableInTouchMode(false);
     number.setCursorVisible(false);
+    iconMsg.setVisibility(View.GONE);
 
     StreamService ss = ((WatchContext)getApplication()).getStream();
     ss.refresh();
@@ -39,7 +48,6 @@ public class MainActivity extends Activity {
     ss.on("startSessionSuccess", new Emitter.Listener() {
       @Override
       public void call(final Object... args) {
-        System.out.println("================Callback on start session!");
         runOnUiThread(new Runnable() {
           @Override
           public void run() {
@@ -58,7 +66,6 @@ public class MainActivity extends Activity {
     final Emitter.Listener transitionListener = new Emitter.Listener() {
       @Override
       public void call(final Object... args) {
-        System.out.println("================Transition");
         runOnUiThread(new Runnable() {
           @Override
           public void run() {
@@ -75,7 +82,6 @@ public class MainActivity extends Activity {
     ss.on("watch_error", new Emitter.Listener() {
       @Override
       public void call(final Object... args) {
-        System.out.println("================Error: " + args[0]);
         runOnUiThread(new Runnable() {
           @Override
           public void run() {

@@ -78,7 +78,6 @@ public class VideoActivity extends Activity {
     ss.on("watch_error", new Emitter.Listener() {
       @Override
       public void call(final Object... args) {
-        System.out.println("================Error; " + args[0]);
         runOnUiThread(new Runnable() {
           @Override
           public void run() {
@@ -91,9 +90,6 @@ public class VideoActivity extends Activity {
     ss.on("image", new Emitter.Listener() {
       @Override
       public void call(final Object... args) {
-        System.out.println(
-            "================Got " + args.length + ", " + ((JSONArray) args[0]).length() +
-            " images.");
         runOnUiThread(new Runnable() {
           @Override
           public void run() {
@@ -135,8 +131,6 @@ public class VideoActivity extends Activity {
   public void schedule() {
     final int scheduleVar = bitmap.isEmpty() ? 500 : 3000 / bitmap.size();
 
-    System.out.println("Still got " + bitmap.size() + " images in " + scheduleVar + " time.");
-
     timer.schedule(new TimerTask() {
       public void run() {
         if (!bitmap.isEmpty()) {
@@ -158,7 +152,7 @@ public class VideoActivity extends Activity {
                   public void run() {
                     vibrating = false;
                   }
-                }, 2000);
+                }, 2500);
               }
             }
           });
