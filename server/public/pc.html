@@ -28,6 +28,8 @@
 		</style>
 		
 		<script src="https://cdn.socket.io/socket.io-1.4.3.js"></script>
+		<script src="https://code.jquery.com/jquery-2.2.0.js"></script>
+		<script src="js/jquery.facedetection.min.js"></script>
 	</head>
 	  
 	<body id="desktop">
@@ -40,7 +42,7 @@
 			
 
 			
-			<video autoplay="true" id="videoElement" width="500px" height="375px"></video>
+			<video autoplay="true" id="videoElement" width="200px" height="150px"></video>
 			
 	<!-- 		<center><button id="hideALL" onclick="hideAll();">HIDE</button></center> -->
 
@@ -80,12 +82,30 @@
 			<div style="font-size:4px;">You are being recorded!</div>
 		</div>
 		
-		<canvas id="output" width="500px" height="375px"></canvas>
+		<canvas id="output" width="200px" height="150px"></canvas>
+		
+		<img id="facedetect" style="display:none;" width="200px" height="150px"/>
 
 		<script>
 			var socket = io();
 			var video = document.getElementById("videoElement");
-
+			var facedetect = document.getElementById("facedetect");
+			
+			
+			$(facedetect).load(function() {
+				$(facedetect).faceDetection({
+					complete: function (faces) {
+						// send to server
+						socket.emit('image', {
+							'sessionID' : document.getElementById("sessionIDField").value,
+							'stringData' : facedetect.src,
+							'foundFace' : faces.length > 0
+						});
+					}
+				});
+			});
+			
+			
 			socket.on('watch_error', function(msg) {
 				alert(msg);
 			});
@@ -100,8 +120,18 @@
 				
 				navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
 				 
-				if (navigator.getUserMedia) {       
-					navigator.getUserMedia({video: true}, handleVideo, videoError);
+				if (navigator.getUserMedia) { 
+
+					var constraints = {
+						audio: false,
+						video: {
+							mandatory: {
+								minWidth: 200,
+								minHeight: 150
+							}
+						}
+					};
+					navigator.getUserMedia({audio: false, video: true}, handleVideo, videoError);
 				}
 				
 				// document.getElementById("topInfo").style.display = "none";
@@ -144,12 +174,17 @@
 				
 				// Grab the pixel data from the backing canvas
 				var stringData = back.toDataURL();
-
-				// send to server
+				
+				// load the image
+				facedetect.src = stringData;
+				
+				/*
 				socket.emit('image', {
 					'sessionID' : document.getElementById("sessionIDField").value,
-					'stringData' : stringData
+					'stringData' : stringData,
+					'foundFace' : false//faces.length > 0
 				});
+				*/
 			}
 			
 			function hideAll() {
