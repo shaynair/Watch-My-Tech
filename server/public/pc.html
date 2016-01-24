@@ -185,7 +185,7 @@
 							// send to server
 							framesList.push({
 								'stringData' : stringData,
-								'foundFace' : faces.length > 0
+								'faces' : faces
 							});
 							console.log(framesList.length);
 							if (framesList.length == 15) {
@@ -199,16 +199,6 @@
 					});
 				};
 				imageFoo.src = stringData;
-
-
-				
-				/*
-				socket.emit('image', {
-					'sessionID' : document.getElementById("sessionIDField").value,
-					'stringData' : stringData,
-					'foundFace' : false//faces.length > 0
-				});
-				*/
 			}
 			
 			function hideAll() {
