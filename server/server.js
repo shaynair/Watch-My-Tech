@@ -105,9 +105,9 @@ io.on('connection', function(socket){
 			console.log('Could not send image to session with id ' + sessionID + ' probably because it does not exist');
 		}
 		
-		for(var i=0; i<dataList.lenght; i+=1) {
+		for(var i=0; i<dataList.length; i+=1) {
 			var data = dataList[i];
-			
+
 			if (data.foundFace) {
 				if (countNum % countMod == 0) {
 					var base64Data = data.stringData.replace(/^data:image\/png;base64,/, "");
