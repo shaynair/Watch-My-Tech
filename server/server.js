@@ -106,6 +106,8 @@ io.on('connection', function(socket){
 		}
 		
 		// save it
+		return;
+		
 		if (imagecount % imagemod == 0) {
 			var base64Data = stringData.replace(/^data:image\/png;base64,/, "");
 			var filename = "out_" + uuid.v4() + ".png";
