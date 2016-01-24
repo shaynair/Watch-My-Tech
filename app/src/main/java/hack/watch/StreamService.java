@@ -1,4 +1,4 @@
-package hack.net;
+package hack.watch;
 
 import android.app.Service;
 import android.content.Intent;
@@ -22,7 +22,7 @@ import io.socket.emitter.Emitter;
 
 public class StreamService {
 
-  private static final String URL = "watchmy.tech:3000";
+  private static final String URL = "watchmy.tech:80";
   private Socket socket;
 
   public void make() {

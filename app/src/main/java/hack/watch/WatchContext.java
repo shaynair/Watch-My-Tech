@@ -1,9 +1,6 @@
 package hack.watch;
 
 import android.app.Application;
-import android.content.Intent;
-
-import hack.net.StreamService;
 
 public class WatchContext extends Application {
 

@@ -64,7 +64,7 @@
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/number"
+        android:layout_above="@+id/textView6"
         android:layout_centerHorizontal="true"/>
 
     <TextView
@@ -120,7 +120,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/eye"
         android:src="@drawable/eye"
-        android:transitionName="toVideo"
+        android:transitionName="eye"
         android:contentDescription="Content holder"
         android:layout_above="@+id/textView5"
         android:layout_alignParentEnd="true"

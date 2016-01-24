@@ -5,6 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Base64;
@@ -19,14 +24,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import hack.net.StreamService;
 import io.socket.emitter.Emitter;
 
 public class VideoActivity extends Activity {
@@ -101,10 +103,17 @@ public class VideoActivity extends Activity {
                     Base64.decode(ob.getString("stringData")
                                     .replace("data:image/png;base64,", ""),
                                   Base64.DEFAULT);
-                bitmap.add(new FaceBitmap(BitmapFactory
-                                              .decodeByteArray(decodedString, 0,
-                                                               decodedString.length),
-                                          ob.getBoolean("foundFace")));
+
+                JSONArray faces = ob.getJSONArray("faces");
+                Rect[] rects = new Rect[faces.length()];
+                for (int j = 0; j < faces.length(); j++) {
+                  JSONObject oneRect = faces.getJSONObject(j);
+                  int x = oneRect.getInt("positionX") - 5, y = oneRect.getInt("positionY") - 5;
+                  rects[j] = new Rect(x, y, x + oneRect.getInt("width") + 10, y + oneRect.getInt("height") + 10);
+                }
+
+                bitmap.add(new FaceBitmap(BitmapFactory.decodeByteArray(decodedString, 0,
+                                                                        decodedString.length), rects));
               }
             } catch (JSONException ignore) {
             }
@@ -120,6 +129,8 @@ public class VideoActivity extends Activity {
 
     StreamService ss = ((WatchContext)getApplication()).getStream();
     if (!ss.connected()) {
+      finish();
+
       Intent intent = new Intent(this, MainActivity.class);
       intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
       startActivity(intent);
@@ -131,6 +142,14 @@ public class VideoActivity extends Activity {
   public void schedule() {
     final int scheduleVar = bitmap.isEmpty() ? 500 : 3000 / bitmap.size();
 
+    final Paint p = new Paint();
+    p.setStyle(Paint.Style.STROKE);
+    p.setStrokeWidth(2.0f);
+    p.setAntiAlias(true);
+    p.setFilterBitmap(true);
+    p.setDither(true);
+    p.setColor(Color.RED);
+
     timer.schedule(new TimerTask() {
       public void run() {
         if (!bitmap.isEmpty()) {
@@ -139,22 +158,40 @@ public class VideoActivity extends Activity {
             @Override
             public void run() {
               loading.setVisibility(View.INVISIBLE);
-              video.setImageBitmap(dat.getBitmap());
 
-              if (dat.isFoundFace() && !vibrating) {
-                // Vibrate for 500 milliseconds
-                ((Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE))
-                    .vibrate(
-                        500);
-                vibrating = true;
+              Bitmap bt = dat.getBitmap();
 
-                timer.schedule(new TimerTask() {
-                  public void run() {
-                    vibrating = false;
-                  }
-                }, 2500);
+
+              if (dat.getFaces().length > 0) {
+                // draw faces
+                Bitmap tempBitmap = Bitmap
+                    .createBitmap(bt.getWidth(), bt.getHeight(), Bitmap.Config.RGB_565);
+                Canvas c = new Canvas(tempBitmap);
+                c.drawBitmap(bt, 0, 0, null);
+                for (Rect r : dat.getFaces()) {
+                  c.drawRect(r, p);
+                }
+
+                video.setImageDrawable(new BitmapDrawable(getResources(), tempBitmap));
+              } else {
+                video.setImageBitmap(bt);
               }
-            }
+
+                if (dat.getFaces().length > 0 && !vibrating) {
+                  // Vibrate for 500 milliseconds
+                  ((Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE))
+                      .vibrate(
+                          500);
+                  vibrating = true;
+
+                  timer.schedule(new TimerTask() {
+                    public void run() {
+                      vibrating = false;
+                    }
+                  }, 2500);
+                }
+              }
+
           });
         }
         schedule();
@@ -209,15 +246,15 @@ public class VideoActivity extends Activity {
 
   private static class FaceBitmap {
     private Bitmap bitmap;
-    private boolean foundFace = false;
+    private Rect[] faces;
 
-    public FaceBitmap(Bitmap bitmap, boolean foundFace) {
+    public FaceBitmap(Bitmap bitmap, Rect[] faces) {
       this.bitmap = bitmap;
-      this.foundFace = foundFace;
+      this.faces = faces;
     }
 
-    public boolean isFoundFace() {
-      return foundFace;
+    public Rect[] getFaces() {
+      return faces;
     }
 
     public Bitmap getBitmap() {

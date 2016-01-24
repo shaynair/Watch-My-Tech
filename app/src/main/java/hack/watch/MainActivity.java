@@ -3,12 +3,12 @@ package hack.watch;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import hack.net.StreamService;
 import io.socket.emitter.Emitter;
 
 public class MainActivity extends Activity {
@@ -72,7 +72,8 @@ public class MainActivity extends Activity {
             progress.setVisibility(View.GONE);
             Intent intent = new Intent(MainActivity.this, VideoActivity.class);
             intent.putExtra("SESSION", Integer.parseInt(number.getText().toString()));
-            startActivity(intent);
+
+            startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(MainActivity.this, eye, "eye").toBundle());
           }
         });
       }
