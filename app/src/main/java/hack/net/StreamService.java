@@ -4,10 +4,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -16,28 +12,41 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StreamService extends Service {
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
+
+public class StreamService {
 
   private static final String URL = "watchmy.tech:3000";
   private Socket socket;
 
-  public StreamService() {
+  public void make() {
+    System.out.println("================Making socket!");
     try {
-      socket = IO.socket("http://" + URL);
+      IO.Options opts = new IO.Options();
+      opts.transports = new String[]{"websocket"};
+
+      socket = IO.socket("http://" + URL, opts);
+      socket.connect();
     } catch (URISyntaxException ignore) {}
   }
 
-  @Override
-  public void onCreate() {
-    super.onCreate();
+  public void refresh() {
+    destroy();
+    make();
+  }
 
-    socket.connect();
+  public boolean connected() {
+    return socket.connected();
   }
 
   public void emit(String name, Object... args) {
+    System.out.println("================Emitted " + name);
     socket.emit(name, args);
   }
 
@@ -45,17 +54,19 @@ public class StreamService extends Service {
     socket.on(name, callback);
   }
 
-  @Override
-  public IBinder onBind(Intent intent) {
-    // TODO: Return the communication channel to the service.
-    throw new UnsupportedOperationException("Not yet implemented");
+  public void off() {
+    socket.off();
   }
 
-  @Override
-  public void onDestroy() {
-    super.onDestroy();
+  public void off(String name) {
+    socket.off(name);
+  }
 
-    socket.disconnect();
-    socket.off();
+  public void destroy() {
+    System.out.println("================Destroyed socket!");
+    if (socket != null) {
+      socket.disconnect();
+      off();
+    }
   }
 }

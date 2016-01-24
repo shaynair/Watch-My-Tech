@@ -32,13 +32,14 @@
         android:layout_centerHorizontal="true"
         android:textStyle="bold"/>
 
-    <TextView
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="JOIN EXISTING SESSION >>"
         android:id="@+id/join"
         android:onClick="join"
+        android:background="?android:selectableItemBackground"
         android:layout_marginBottom="90dp"
         android:alpha="1"
         android:layout_alignParentBottom="true"
@@ -49,6 +50,7 @@
         android:layout_height="wrap_content"
         android:inputType="number"
         android:ems="4"
+        android:maxLength="7"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="#"
         android:id="@+id/number"
@@ -120,11 +122,11 @@
         android:src="@drawable/eye"
         android:transitionName="toVideo"
         android:contentDescription="Content holder"
-        android:layout_above="@+id/progress"
+        android:layout_above="@+id/textView5"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/textView7"/>
 
-    <TextView
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
@@ -132,6 +134,7 @@
         android:id="@+id/gen"
         android:onClick="gen"
         android:alpha="1"
+        android:background="?android:selectableItemBackground"
         android:layout_below="@+id/checkedTextView6"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="35dp"/>

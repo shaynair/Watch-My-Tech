@@ -1,22 +1,17 @@
 package hack.watch;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.github.nkzawa.emitter.Emitter;
-
-import org.json.JSONObject;
-
 import hack.net.StreamService;
-import hack.net.WatchContext;
+import io.socket.emitter.Emitter;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
   private ImageView eye, iconMsg;
   private TextView number;
@@ -32,57 +27,95 @@ public class MainActivity extends AppCompatActivity {
     number = (TextView) findViewById(R.id.number);
     progress = (ProgressBar) findViewById(R.id.progress);
 
-    gen(getCurrentFocus());
-  }
-
-  public void gen(View view) {
-    progress.setVisibility(View.VISIBLE);
-    iconMsg.setVisibility(View.GONE);
+    number.setFocusable(false);
+    number.setClickable(false);
+    number.setEnabled(false);
+    number.setFocusableInTouchMode(false);
+    number.setCursorVisible(false);
 
     StreamService ss = ((WatchContext)getApplication()).getStream();
+    ss.refresh();
+    ss.off();
     ss.on("startSessionSuccess", new Emitter.Listener() {
       @Override
       public void call(final Object... args) {
+        System.out.println("================Callback on start session!");
         runOnUiThread(new Runnable() {
           @Override
           public void run() {
+            number.setFocusable(true);
+            number.setFocusableInTouchMode(true);
+            number.setClickable(true);
+            number.setEnabled(true);
+            number.setCursorVisible(true);
+
             progress.setVisibility(View.GONE);
             number.setText(String.valueOf((Integer) args[0]));
           }
         });
       }
     });
+    final Emitter.Listener transitionListener = new Emitter.Listener() {
+      @Override
+      public void call(final Object... args) {
+        System.out.println("================Transition");
+        runOnUiThread(new Runnable() {
+          @Override
+          public void run() {
+            progress.setVisibility(View.GONE);
+            Intent intent = new Intent(MainActivity.this, VideoActivity.class);
+            intent.putExtra("SESSION", Integer.parseInt(number.getText().toString()));
+            startActivity(intent);
+          }
+        });
+      }
+    };
+    ss.on("joinSessionSuccess", transitionListener);
+    ss.on("image", transitionListener);
+    ss.on("watch_error", new Emitter.Listener() {
+      @Override
+      public void call(final Object... args) {
+        System.out.println("================Error: " + args[0]);
+        runOnUiThread(new Runnable() {
+          @Override
+          public void run() {
+            progress.setVisibility(View.GONE);
+            iconMsg.setVisibility(View.VISIBLE);
+            number.setError((String)args[0]);
+            number.requestFocus();
+          }
+        });
+      }
+    });
+
     ss.emit("startSession");
+  }
+
+  public void gen(View view) {
+    progress.setVisibility(View.VISIBLE);
+    iconMsg.setVisibility(View.GONE);
+    number.setError(null);
+
+    StreamService ss = ((WatchContext)getApplication()).getStream();
+    if (ss.connected()) {
+      ss.emit("startSession");
+    }
   }
 
   public void join(View view) {
     progress.setVisibility(View.VISIBLE);
     iconMsg.setVisibility(View.GONE);
+    number.setError(null);
 
     StreamService ss = ((WatchContext)getApplication()).getStream();
-    ss.on("joinSessionSuccess", new Emitter.Listener() {
-      @Override
-      public void call(final Object... args) {
-        runOnUiThread(new Runnable() {
-          @Override
-          public void run() {
-            progress.setVisibility(View.GONE);
-            startActivity(new Intent(MainActivity.this, VideoActivity.class));
-          }
-        });
-      }
-    });
-    ss.on("watch_error", new Emitter.Listener() {
-      @Override
-      public void call(final Object... args) {
-        runOnUiThread(new Runnable() {
-          @Override
-          public void run() {
-            iconMsg.setVisibility(View.VISIBLE);
-          }
-        });
-      }
-    });
-    ss.emit("joinSession");
+    ss.emit("joinSession", number.getText().toString());
+  }
+
+  @Override
+  public void onDestroy(){
+    super.onDestroy();
+
+    StreamService ss = ((WatchContext)getApplication()).getStream();
+    ss.destroy();
   }
 }
