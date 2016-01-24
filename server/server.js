@@ -56,7 +56,6 @@ io.on('connection', function(socket){
 		};
 		socket.emit('startSessionSuccess', sessionMAINID);
 		console.log('set up phone client with id ' + sessionMAINID);
-		socket["sessionMAINID"] = sessionMAINID;
 		sessionMAINID += 1;
 	});
 	
@@ -135,7 +134,11 @@ io.on('connection', function(socket){
 	socket.on('disconnect', function() {
 		for(var prop in sessions) {
 			if (sessions.hasOwnProperty(prop)) {
-				if (prop === socket["sessionMAINID"]) {
+				if (sessions[prop].source.id === socket.id) {
+					var clients = sessions[prop].clients;
+					for(var i=0; i<clients.length; i+=1) {
+						clients[i].disconnect();
+					}
 					delete sessions[prop];
 					console.log('a source left');
 					return;
