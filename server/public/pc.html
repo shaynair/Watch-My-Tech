@@ -96,7 +96,7 @@
 			var framesList = [];
 			var video = document.getElementById("videoElement");
 			var facedetect = document.getElementById("facedetect");
-			
+			var uploadInterval = -1;
 			
 
 			
@@ -108,7 +108,7 @@
 			socket.on('sourceConnectSuccess', function(data) {
 				
 				video.onloadedmetadata = function() {
-					setInterval(function() {
+					uploadInterval = setInterval(function() {
 						show_video();
 					}, 1);
 				};
@@ -145,6 +145,10 @@
 						//speak('That\'s right, you are being recorded!');
 					});
 				}
+			});
+			
+			socket.on('imageFailed', function() {
+				clearInterval(uploadInterval);
 			});
 			
 			function connectSource() {

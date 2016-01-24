@@ -123,6 +123,7 @@ io.on('connection', function(socket){
 			}
 		
 		} else {
+			socket.emit('imageFailed', '');
 			console.log('Could not send image to session with id ' + sessionID + ' probably because it does not exist');
 		}
 	});
