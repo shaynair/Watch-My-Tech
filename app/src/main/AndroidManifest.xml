@@ -21,6 +21,12 @@
         </activity>
         <activity android:name=".VideoActivity">
         </activity>
+
+        <service
+            android:name="hack.net.StreamService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
     </application>
 
 </manifest>

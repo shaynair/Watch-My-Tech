@@ -26,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="watchmy.space"
+        android:text="watchmy.tech"
         android:id="@+id/textView2"
         android:layout_below="@+id/textView"
         android:layout_centerHorizontal="true"
@@ -54,8 +54,6 @@
         android:id="@+id/number"
         android:layout_marginBottom="36dp"
         android:textStyle="bold"
-        android:clickable="false"
-        android:focusable="false"
         android:layout_above="@+id/textView6"
         android:layout_centerHorizontal="true"/>
 
@@ -120,6 +118,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/eye"
         android:src="@drawable/eye"
+        android:transitionName="toVideo"
         android:contentDescription="Content holder"
         android:layout_above="@+id/progress"
         android:layout_alignParentEnd="true"

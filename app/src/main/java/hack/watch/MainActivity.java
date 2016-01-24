@@ -1,5 +1,6 @@
 package hack.watch;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -7,6 +8,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.github.nkzawa.emitter.Emitter;
+
+import org.json.JSONObject;
+
+import hack.net.StreamService;
+import hack.net.WatchContext;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,10 +36,53 @@ public class MainActivity extends AppCompatActivity {
   }
 
   public void gen(View view) {
+    progress.setVisibility(View.VISIBLE);
+    iconMsg.setVisibility(View.GONE);
 
+    StreamService ss = ((WatchContext)getApplication()).getStream();
+    ss.on("startSessionSuccess", new Emitter.Listener() {
+      @Override
+      public void call(final Object... args) {
+        runOnUiThread(new Runnable() {
+          @Override
+          public void run() {
+            progress.setVisibility(View.GONE);
+            number.setText(String.valueOf((Integer) args[0]));
+          }
+        });
+      }
+    });
+    ss.emit("startSession");
   }
 
   public void join(View view) {
+    progress.setVisibility(View.VISIBLE);
+    iconMsg.setVisibility(View.GONE);
 
+    StreamService ss = ((WatchContext)getApplication()).getStream();
+    ss.on("joinSessionSuccess", new Emitter.Listener() {
+      @Override
+      public void call(final Object... args) {
+        runOnUiThread(new Runnable() {
+          @Override
+          public void run() {
+            progress.setVisibility(View.GONE);
+            startActivity(new Intent(MainActivity.this, VideoActivity.class));
+          }
+        });
+      }
+    });
+    ss.on("watch_error", new Emitter.Listener() {
+      @Override
+      public void call(final Object... args) {
+        runOnUiThread(new Runnable() {
+          @Override
+          public void run() {
+            iconMsg.setVisibility(View.VISIBLE);
+          }
+        });
+      }
+    });
+    ss.emit("joinSession");
   }
 }
