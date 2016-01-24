@@ -33,13 +33,13 @@ import io.socket.emitter.Emitter;
 
 public class VideoActivity extends Activity {
 
-  private ImageView video;
+  private ImageView video, eye;
   private TextView loading;
   private EditText edit;
   private int sessionID = 0;
   private Queue<FaceBitmap> bitmap = new ConcurrentLinkedQueue<>();
 
-  private boolean vibrating = false;
+  private boolean vibrating = false, going = false;
   private Timer timer = new Timer();
 
   @Override
@@ -55,24 +55,8 @@ public class VideoActivity extends Activity {
     video = (ImageView)findViewById(R.id.image);
     edit = (EditText)findViewById(R.id.editText);
     loading = (TextView)findViewById(R.id.textView3);
-    final ImageView eye = (ImageView)findViewById(R.id.eye);
-    AlphaAnimation anim = new AlphaAnimation(1.0f, 0.0f);
-    anim.setDuration(3000);
-    anim.setAnimationListener(new Animation.AnimationListener() {
-      @Override
-      public void onAnimationEnd(Animation animation) {
-        eye.setVisibility(View.INVISIBLE);
-      }
+    eye = (ImageView)findViewById(R.id.eye);
 
-      @Override
-      public void onAnimationStart(Animation animation) {
-      }
-
-      @Override
-      public void onAnimationRepeat(Animation animation) {
-      }
-    });
-    eye.startAnimation(anim);
 
     StreamService ss = ((WatchContext)getApplication()).getStream();
 
@@ -109,11 +93,13 @@ public class VideoActivity extends Activity {
                 for (int j = 0; j < faces.length(); j++) {
                   JSONObject oneRect = faces.getJSONObject(j);
                   int x = oneRect.getInt("positionX") - 5, y = oneRect.getInt("positionY") - 5;
-                  rects[j] = new Rect(x, y, x + oneRect.getInt("width") + 10, y + oneRect.getInt("height") + 10);
+                  rects[j] = new Rect(x, y, x + oneRect.getInt("width") + 10,
+                                      y + oneRect.getInt("height") + 10);
                 }
 
                 bitmap.add(new FaceBitmap(BitmapFactory.decodeByteArray(decodedString, 0,
-                                                                        decodedString.length), rects));
+                                                                        decodedString.length),
+                                          rects));
               }
             } catch (JSONException ignore) {
             }
@@ -140,6 +126,28 @@ public class VideoActivity extends Activity {
   }
 
   public void schedule() {
+    if (eye.getAlpha() > 0 && !going) {
+      going = true;
+
+      AlphaAnimation anim = new AlphaAnimation(1.0f, 0.0f);
+      anim.setDuration(3000);
+      anim.setAnimationListener(new Animation.AnimationListener() {
+        @Override
+        public void onAnimationEnd(Animation animation) {
+          eye.setVisibility(View.INVISIBLE);
+          eye.setAlpha(0.0f);
+        }
+
+        @Override
+        public void onAnimationStart(Animation animation) {
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+        }
+      });
+      eye.startAnimation(anim);
+    }
     final int scheduleVar = bitmap.isEmpty() ? 500 : 3000 / bitmap.size();
 
     final Paint p = new Paint();
@@ -235,6 +243,7 @@ public class VideoActivity extends Activity {
     super.onStop();
 
     timer.purge();
+    going = false;
   }
 
   @Override
@@ -242,6 +251,7 @@ public class VideoActivity extends Activity {
     super.onDestroy();
 
     timer.cancel();
+    going = false;
   }
 
   private static class FaceBitmap {

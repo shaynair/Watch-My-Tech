@@ -2,6 +2,7 @@ package hack.watch;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
@@ -21,6 +22,7 @@ public class MainActivity extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(hack.watch.R.layout.activity_main);
+    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
     eye = (ImageView) findViewById(R.id.eye);
     iconMsg = (ImageView) findViewById(R.id.icon_msg);
@@ -73,7 +75,7 @@ public class MainActivity extends Activity {
             Intent intent = new Intent(MainActivity.this, VideoActivity.class);
             intent.putExtra("SESSION", Integer.parseInt(number.getText().toString()));
 
-            startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(MainActivity.this, eye, "eye").toBundle());
+            startActivity(intent);
           }
         });
       }
