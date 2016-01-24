@@ -134,7 +134,7 @@ io.on('connection', function(socket){
 	socket.on('disconnect', function() {
 		for(var prop in sessions) {
 			if (sessions.hasOwnProperty(prop)) {
-				if (sessions[prop].source.id === socket.id) {
+				if (sessions[prop].source && sessions[prop].source.id === socket.id) {
 					var clients = sessions[prop].clients;
 					for(var i=0; i<clients.length; i+=1) {
 						clients[i].disconnect();
