@@ -22,7 +22,7 @@ import io.socket.emitter.Emitter;
 
 public class StreamService {
 
-  private static final String URL = "watchmy.tech:80";
+  private static final String URL = "watchmy.tech:3000";
   private Socket socket;
 
   public void make() {
