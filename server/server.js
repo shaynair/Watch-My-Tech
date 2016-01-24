@@ -41,9 +41,8 @@ function sendVoiceMessage(sessionID, message, socket) {
 	}
 }
 
-
-var imagemod = 10;
-var imagecount = 0;
+var countMod = 5;
+var countNum = 0;
 var sessions = [];
 var sessionMAINID = 1000;
 var io = require('socket.io').listen(server);
@@ -57,7 +56,6 @@ io.on('connection', function(socket){
 		};
 		socket.emit('startSessionSuccess', sessionMAINID);
 		console.log('set up phone client with id ' + sessionMAINID);
-		socket["sessionMAINID"] = sessionMAINID;
 		sessionMAINID += 1;
 	});
 	
@@ -93,39 +91,54 @@ io.on('connection', function(socket){
 		sendVoiceMessage(sessionID, message, socket);
 	});
 	
-	socket.on('image', function(data) {
+	socket.on('image', function(data) {		
 		var sessionID = data.sessionID;
 		var stringData = data.stringData;
+		var foundFace = data.foundFace;
+		
+		if (foundFace) {
+			console.log("Detected face!");
+		} else {
+			console.log("Not detected face!");
+		}
+		
 		if (sessionID in sessions) {
 			var listOfClients = sessions[sessionID].clients;
 			for(var i=0; i<listOfClients.length; i+=1) {
 				listOfClients[i].emit('image', stringData);
+				if (foundFace) {
+					listOfClients[i].emit('vibrate', '');
+				}
 			}
 		} else {
 			console.log('could not send image to session with id ' + sessionID + ' probably because it does not exist');
 		}
 		
 		// save it
-		return;
-		
-		if (imagecount % imagemod == 0) {
-			var base64Data = stringData.replace(/^data:image\/png;base64,/, "");
-			var filename = "out_" + uuid.v4() + ".png";
-			fs.writeFile("captures/" + filename, base64Data, 'base64', function(err) {
-				if (err) {
-					console.log(err);
-				} else {
-					console.log("Saved file " + filename);
-				}
-			});
-		}
-		imagecount += 1;
+		if (foundFace) {
+			if (countNum % countMod == 0) {
+				var base64Data = stringData.replace(/^data:image\/png;base64,/, "");
+				var filename = "out_" + uuid.v4() + ".png";
+				fs.writeFile("captures/" + filename, base64Data, 'base64', function(err) {
+					if (err) {
+						console.log(err);
+					} else {
+						console.log("Saved file " + filename);
+					}
+				});
+			}
+			countNum += 1;
+		} 
 	});
 	
 	socket.on('disconnect', function() {
 		for(var prop in sessions) {
 			if (sessions.hasOwnProperty(prop)) {
-				if (prop === socket["sessionMAINID"]) {
+				if (sessions[prop].source && sessions[prop].source.id === socket.id) {
+					var clients = sessions[prop].clients;
+					for(var i=0; i<clients.length; i+=1) {
+						clients[i].disconnect();
+					}
 					delete sessions[prop];
 					console.log('a source left');
 					return;
