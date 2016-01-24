@@ -96,6 +96,15 @@
 				document.getElementById("broadcastMessage").value = "";
 			});
 			
+			socket.on('vibrate', function() {
+				if (window.navigator && window.navigator.vibrate) {
+					// Shake that device!
+					navigator.vibrate(1000);
+				} else {
+				   // Not supported
+				}
+			});
+			
 			function startSession() {
 				socket.emit("startSession");
 			}
