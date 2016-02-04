@@ -19,7 +19,7 @@ app.get('/', function (req, res) {
 });
 
 
-var backServer = app.listen(3000, function () {
+var backServer = app.listen(process.env.PORT || 3000, function () {
 	var host = backServer.address().address;
 	var port = backServer.address().port;
 
