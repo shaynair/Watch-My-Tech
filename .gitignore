@@ -1,2 +1,6 @@
-node_modules
+node_modules/express
+node_modules/fs
+node_modules/node-uuid
+node_modules/path
+node_modules/random-js
 android
