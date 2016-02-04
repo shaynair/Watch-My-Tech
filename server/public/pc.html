@@ -92,7 +92,7 @@
 		<img id="facedetect" style="display:none;" width="200px" height="150px"/>
 
 		<script>
-			var socket = io("http://localhost:3000/");
+			var socket = io();
 			var framesList = [];
 			var video = document.getElementById("videoElement");
 			var facedetect = document.getElementById("facedetect");
@@ -141,7 +141,7 @@
 				if (data) {
 					speak(data);
 				} else {
-					speak('Stop! You are being recorded! Stop Stop Stop Stop! I mean it. I am following you as I speak...', function() {
+					speak('Stop! You are being recorded!', function() {
 						//speak('That\'s right, you are being recorded!');
 					});
 				}

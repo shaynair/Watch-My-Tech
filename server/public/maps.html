@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta content="stuff, to, help, search, engines, not" name="keywords">
+		<meta content="What this page is about." name="description">
+		<meta content="Display Webcam Stream" name="title">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+		<title>Display Webcam Stream</title>
+
+		<link href='https://fonts.googleapis.com/css?family=Roboto:400,300,500,700' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+
+		<script src="https://code.jquery.com/jquery-3.0.0-beta1.min.js"></script>
+		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&amp;language=en"></script>
+		<script src="js/gmap3.min.js"></script>
+	</head>
+	  
+	<body>
+
+		<div id="map_content">
+			<div class="ui-content" id="map_canvas">
+				<!-- map loads here... -->
+			</div>
+		</div>
+		
+		<script>
+
+			var map = null;
+			
+			function showMap() {
+				if ($('#map_canvas')) {
+					MAP_SETTINGS_MODULE.getLocations();
+				} else {
+					initMap();
+				}
+			}
+
+			function showPoint(obj) {
+				showMapPage();
+				
+				handleSettingsButton(false);
+				
+				if ($(context).find('#map_canvas').prop('init')) {
+					displayPointOnMap(obj);
+				} else {
+					initPointMap(obj);
+				}
+			}
+
+			function showOnMap(locations) {
+
+				// clear markers
+				$(context).find('#map_canvas').gmap('clear', 'markers');
+				
+				var i=0, l=locations.length;
+
+				// add new markers
+				for (i=0; i<l; i+=1) {
+					
+					var loc = locations[i];
+
+					var pos = {
+						'position': new google.maps.LatLng(loc['latitude'], loc['longitude']), 
+						'bounds': false,
+						'icon': 'http://maps.google.com/mapfiles/ms/icons/' + loc['color'] + '-dot.png'
+					};
+					
+					$(context).find('#map_canvas').gmap('addMarker', pos).on('click', function() {
+						$(context).find('#map_canvas').gmap('openInfoWindow', {'content': loc['address']}, this);
+					});
+				}
+				
+				// set zoom
+				$(context).find('#map_canvas').gmap('option', 'zoom', 10);
+				
+				// cluster markers
+				$(context).find('#map_canvas').gmap('set', 'MarkerClusterer', new MarkerClusterer(map, $(context).find('#map_canvas').gmap('get', 'markers')));
+			}
+			
+
+
+			var showMapPage = function() {
+				$.mobile.changePage(context, { 
+					transition: "slide"
+				});
+			}
+
+			var handleSettingsButton = function(state) {
+				if (state) {
+					$(context).find("#map-setting-button").show();
+				} else {
+					$(context).find("#map-setting-button").hide();
+				}
+			}
+
+			var initMap = function() {
+				
+				$(context).find('#map_canvas').gmap().bind('init', function(ev, thismap) {
+					
+					map = thismap;
+					$(this).prop('init', true);
+					
+					if ( navigator.geolocation ) {
+
+						// Find the users current position.  Cache the location for 5 minutes, timeout after 6 seconds
+						navigator.geolocation.getCurrentPosition(function (pos) {
+
+							$(context).find('#map_canvas').gmap("option", "center", new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+							
+							MAP_SETTINGS_MODULE.getLocations();
+
+						}, function (error) {
+
+							loadDefLocation();
+							
+							MAP_SETTINGS_MODULE.getLocations();
+							
+							switch(error.code) {
+								case error.PERMISSION_DENIED:
+									alert("Could not get your location. User denied the request for Geolocation.");
+									break;
+								case error.POSITION_UNAVAILABLE:
+									alert("Could not get your location. Location information is unavailable.");
+									break;
+								case error.TIMEOUT:
+									alert("Could not get your location. The request to get user location timed out.");
+									break;
+								case error.UNKNOWN_ERROR:
+									alert("Could not get your location. An unknown error occurred.");
+									break;
+								default:
+									alert("Could not get your location. An unknown error occurred.");
+							}
+						}, {
+							maximumAge: 500000, 
+							enableHighAccuracy:true, 
+							timeout: 6000
+						});
+					} else {
+						loadDefLocation();
+					}
+					
+					$(context).find('#map_canvas').gmap('addControl', 'map-setting-button', google.maps.ControlPosition.RIGHT_TOP);
+				});
+			}
+			
+			var loadDefLocation = function() {
+				var defLoc = new google.maps.LatLng(43.784712, -79.185998); // UTSC default location
+				$(context).find('#map_canvas').gmap("option", "center", defLoc);
+			}
+			
+			var initPointMap = function(obj) {
+				$(context).find('#map_canvas').gmap().bind('init', function(ev, thismap) {
+
+					map = thismap;
+					$(this).prop('init', true);
+							
+					displayPointOnMap(obj);
+				});
+			}
+
+			var displayPointOnMap = function(obj) {
+				$(context).find('#map_canvas').gmap("option", "center", new google.maps.LatLng(obj['latitude'], obj['longitude']));
+				showOnMap([obj]);
+			}
+		</script>
+	</body>
+</html>

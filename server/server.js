@@ -9,6 +9,7 @@ var random = require("random-js")();
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', function (req, res) {	
+	//console.log(1);
 	if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(req.headers['user-agent'] || "unknown")) {
 		var dest = 'public/phone.html';
 	} else {
@@ -17,18 +18,12 @@ app.get('/', function (req, res) {
 	res.sendFile(dest, { root: __dirname });
 });
 
-var server = app.listen(80, function () {
-	var host = server.address().address;
-	var port = server.address().port;
-
-	console.log('Watch My Tech started at http://%s:%s', host, port);
-});
 
 var backServer = app.listen(3000, function () {
 	var host = backServer.address().address;
 	var port = backServer.address().port;
 
-	console.log('Watch My Tech (back-end) started at http://%s:%s', host, port);
+	console.log('Watch My Tech started at http://%s:%s', host, port);
 });
 
 function sendVoiceMessage(sessionID, message, socket) {
@@ -55,7 +50,7 @@ var sessionMAINID = 1000 + random.integer(1, 20);
 var io = require('socket.io').listen(backServer);
 
 io.on('connection', function(socket){
-
+	//console.log(2);
 	socket.on('startSession', function() {
 		sessions[sessionMAINID] = {
 			'clients' : [socket],
