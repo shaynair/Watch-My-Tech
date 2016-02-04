@@ -1,0 +1,21 @@
+heroku login
+
+// clone a repo and cd into it
+// if you already have a repo, just cd into it
+
+heroku create
+heroku buildpacks:remove heroku/nodejs    // don't run this the first time, cause it won't exist
+heroku buildpacks:set heroku/nodejs
+git push heroku master                  // master should be the branch name from your main git account you want heroku to use
+heroku ps:scale web=1
+heroku open
+
+// use 'heroku logs' if the app crashes in the web
+
+// notes: you must upload socket.io to git, heroku doesn't auto download that
+// tutorial: https://devcenter.heroku.com/articles/getting-started-with-nodejs#introduction
+// have package.json and Procfile, also when you declare the port in server.js, use server.listen(process.env.PORT || 3000) 
+
+
+// custom domain
+heroku domains:add watchmy.tech
