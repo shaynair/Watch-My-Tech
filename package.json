@@ -1,0 +1,29 @@
+{
+  "name": "WatchMy.Tech",
+  "version": "0.1.5",
+  "description": "A sample Node.js app using Express 4",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "4.13.3",
+	"path":"0.12.7",
+	"fs":"0.0.2",
+	"node-uuid":"1.4.7",
+	"random-js":"1.0.8"
+  },
+  "engines": {
+    "node": "4.2.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git.heroku.com/watchmy-tech.git"
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "express"
+  ],
+  "license": "MIT"
+}
