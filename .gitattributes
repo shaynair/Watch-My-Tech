@@ -1,1 +1,4 @@
 node_modules/* linguist-vendored=false
+public/maps.html linguist-vendored=false
+public/pc.html linguist-language=JavaScript
+public/phone.html linguist-language=JavaScript
